@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.2
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2019 at 03:05 AM
--- Server version: 10.1.34-MariaDB
--- PHP Version: 7.2.7
+-- Generation Time: Dec 30, 2019 at 05:35 PM
+-- Server version: 10.4.6-MariaDB
+-- PHP Version: 7.3.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -52,6 +52,57 @@ INSERT INTO `categories` (`CategoryID`, `CategoryName`, `Description`, `Picture`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `dosen`
+--
+
+CREATE TABLE `dosen` (
+  `npp` varchar(30) NOT NULL,
+  `nama` varchar(150) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `dosen`
+--
+
+INSERT INTO `dosen` (`npp`, `nama`, `created_at`, `updated_at`) VALUES
+('18922633', 'Ana Suryaningsih', '2019-12-27 21:43:25', '0000-00-00 00:00:00'),
+('23123122', 'Muhammad Munir Akromin', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+('23476236', 'Linda Pratiwi', '2019-12-18 22:01:08', '0000-00-00 00:00:00'),
+('27312371', 'Zilfana Falahi', '2019-12-13 00:00:00', '2019-12-14 00:19:03'),
+('46564136', 'Intan Hidayah', '2019-12-18 22:01:08', '0000-00-00 00:00:00'),
+('64516761', 'Adi Kurniawan', '2019-12-13 00:00:00', '0000-00-00 00:00:00'),
+('64724515', 'Faiz Ibnu Sholeh', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+('67423747', 'Miftakhul Huda', '2019-12-27 21:43:25', '0000-00-00 00:00:00'),
+('92632543', 'Fajar Nopriangga', '2019-12-26 23:06:49', '2019-12-26 17:10:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dosen_kelas`
+--
+
+CREATE TABLE `dosen_kelas` (
+  `dsnKelasID` varchar(30) NOT NULL,
+  `kelasID` varchar(30) NOT NULL,
+  `npp` varchar(30) NOT NULL,
+  `thnAkademikID` varchar(30) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `dosen_kelas`
+--
+
+INSERT INTO `dosen_kelas` (`dsnKelasID`, `kelasID`, `npp`, `thnAkademikID`, `created_at`, `updated_at`) VALUES
+('425638', '341313', '64516761', '544587', '2019-12-16 00:00:00', '0000-00-00 00:00:00'),
+('895231', '673745', '27312371', '544587', '2019-12-16 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `groups`
 --
 
@@ -72,6 +123,30 @@ INSERT INTO `groups` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `kelas`
+--
+
+CREATE TABLE `kelas` (
+  `kelasID` varchar(30) NOT NULL,
+  `nama_kelas` varchar(150) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `kelas`
+--
+
+INSERT INTO `kelas` (`kelasID`, `nama_kelas`, `created_at`, `updated_at`) VALUES
+('341313', 'Kamboja', '2019-12-14 06:29:42', '2019-12-14 06:32:45'),
+('345254', 'Tratai', '2019-12-28 10:46:23', '0000-00-00 00:00:00'),
+('378457', 'Melati', '2019-12-14 00:00:00', '0000-00-00 00:00:00'),
+('462464', 'Tulip', '2019-12-28 10:46:23', '0000-00-00 00:00:00'),
+('673745', 'Mawar', '2019-12-14 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `login_attempts`
 --
 
@@ -85,6 +160,52 @@ CREATE TABLE `login_attempts` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mahasiswa`
+--
+
+CREATE TABLE `mahasiswa` (
+  `nim` varchar(30) NOT NULL,
+  `nama` varchar(150) NOT NULL,
+  `prodiID` varchar(150) NOT NULL,
+  `angkatan` varchar(30) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `mahasiswa`
+--
+
+INSERT INTO `mahasiswa` (`nim`, `nama`, `prodiID`, `angkatan`, `created_at`, `updated_at`) VALUES
+('12171568', 'Muhammad Alvian Rizky', '48401', '2017', '2019-12-15 00:00:00', '0000-00-00 00:00:00'),
+('12171570', 'Muhammad Munir Akromin', '14901\r\n', '2017', '2019-12-15 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mahasiswa_kelas`
+--
+
+CREATE TABLE `mahasiswa_kelas` (
+  `mhsKelasID` varchar(30) NOT NULL,
+  `kelasID` varchar(30) NOT NULL,
+  `nim` varchar(30) NOT NULL,
+  `thnAkademikID` varchar(30) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `mahasiswa_kelas`
+--
+
+INSERT INTO `mahasiswa_kelas` (`mhsKelasID`, `kelasID`, `nim`, `thnAkademikID`, `created_at`, `updated_at`) VALUES
+('231231', '673745', '12171568', '544587', '2019-12-15 00:00:00', '2019-12-15 16:32:43'),
+('651245', '378457', '12171570', '544587', '2019-12-15 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `products`
 --
 
@@ -94,11 +215,11 @@ CREATE TABLE `products` (
   `SupplierID` int(11) DEFAULT NULL,
   `CategoryID` int(11) DEFAULT NULL,
   `QuantityPerUnit` varchar(20) DEFAULT NULL,
-  `UnitPrice` float(1,0) DEFAULT '0',
-  `UnitsInStock` smallint(6) DEFAULT '0',
-  `UnitsOnOrder` smallint(6) DEFAULT '0',
-  `ReorderLevel` smallint(6) DEFAULT '0',
-  `Discontinued` tinyint(1) DEFAULT '0'
+  `UnitPrice` float(1,0) DEFAULT 0,
+  `UnitsInStock` smallint(6) DEFAULT 0,
+  `UnitsOnOrder` smallint(6) DEFAULT 0,
+  `ReorderLevel` smallint(6) DEFAULT 0,
+  `Discontinued` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -230,7 +351,7 @@ CREATE TABLE `suppliers` (
   `Country` varchar(15) DEFAULT NULL,
   `Phone` varchar(24) DEFAULT NULL,
   `Fax` varchar(24) DEFAULT NULL,
-  `HomePage` text
+  `HomePage` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -271,6 +392,30 @@ INSERT INTO `suppliers` (`SupplierID`, `CompanyName`, `ContactName`, `ContactTit
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tahunakademik`
+--
+
+CREATE TABLE `tahunakademik` (
+  `thnAkademikID` varchar(30) NOT NULL,
+  `thnAkademik` varchar(30) NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tahunakademik`
+--
+
+INSERT INTO `tahunakademik` (`thnAkademikID`, `thnAkademik`, `status`, `created_at`, `updated_at`) VALUES
+('213123', '2018/2019', 'Tidak Aktif', '2019-12-14 00:00:00', '2019-12-16 06:33:26'),
+('237467', '2017/2018', 'Tidak Aktif', '2019-12-28 14:03:13', '0000-00-00 00:00:00'),
+('544587', '2019/2020', 'Aktif', '2019-12-14 00:00:00', '0000-00-00 00:00:00'),
+('784672', '2016/2017', 'Tidak Aktif', '2019-12-28 14:03:13', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -285,8 +430,8 @@ CREATE TABLE `users` (
   `forgotten_password_code` varchar(40) DEFAULT NULL,
   `forgotten_password_time` int(11) UNSIGNED DEFAULT NULL,
   `remember_code` varchar(40) DEFAULT NULL,
-  `created_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
-  `last_login` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
+  `last_login` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `active` tinyint(1) UNSIGNED DEFAULT NULL,
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
@@ -299,7 +444,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, '9i8C6Rc52DH3JcsoVaIpsu', '2019-12-13 08:40:01', '2019-12-13 02:40:01', 1, 'Admin', 'istrator', 'ADMIN', '0');
+(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, 'q/NpS9LmynsSThxU6XccdO', '2019-12-28 13:48:43', '2019-12-28 07:48:43', 1, 'Admin', 'istrator', 'ADMIN', '0');
 
 -- --------------------------------------------------------
 
@@ -332,16 +477,46 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`CategoryID`);
 
 --
+-- Indexes for table `dosen`
+--
+ALTER TABLE `dosen`
+  ADD PRIMARY KEY (`npp`);
+
+--
+-- Indexes for table `dosen_kelas`
+--
+ALTER TABLE `dosen_kelas`
+  ADD PRIMARY KEY (`dsnKelasID`);
+
+--
 -- Indexes for table `groups`
 --
 ALTER TABLE `groups`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `kelas`
+--
+ALTER TABLE `kelas`
+  ADD PRIMARY KEY (`kelasID`);
+
+--
 -- Indexes for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mahasiswa`
+--
+ALTER TABLE `mahasiswa`
+  ADD PRIMARY KEY (`nim`);
+
+--
+-- Indexes for table `mahasiswa_kelas`
+--
+ALTER TABLE `mahasiswa_kelas`
+  ADD PRIMARY KEY (`mhsKelasID`);
 
 --
 -- Indexes for table `products`
@@ -360,6 +535,12 @@ ALTER TABLE `programstudi`
 --
 ALTER TABLE `suppliers`
   ADD PRIMARY KEY (`SupplierID`);
+
+--
+-- Indexes for table `tahunakademik`
+--
+ALTER TABLE `tahunakademik`
+  ADD PRIMARY KEY (`thnAkademikID`);
 
 --
 -- Indexes for table `users`
@@ -396,7 +577,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `products`
