@@ -40,6 +40,11 @@
         </ul>
     </li>
     <li>
+        <a href="<?php echo site_url('mahasiswa');?>">
+            <i class="fa fa-users"></i> <span>Mahasiswa Management</span>
+        </a>
+    </li>
+    <li>
         <a href="<?php echo site_url('dosen');?>">
             <i class="fa fa-users"></i> <span>Dosen Management</span>
         </a>
