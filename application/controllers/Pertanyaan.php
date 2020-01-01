@@ -9,16 +9,16 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
-class Mahasiswa extends CI_Controller {
+class Pertanyaan extends CI_Controller {
 
-   protected $page_header = 'Mahasiswa Management';
+   protected $page_header = 'Pertanyaan Management';
 
    public function __construct()
    {
       parent::__construct();
 
 
-      $this->load->model(array('Import_model'=> 'imp', 'Mahasiswa_model' => 'mahasiswa', 'Prodi_model' => 'prodi'));
+      $this->load->model(array('Import_model'=> 'imp', 'Group_model' => 'group', 'Pertanyaan_model' => 'pertanyaan'));
       $this->load->library(array('ion_auth', 'form_validation', 'template'));
       $this->load->helper('bootstrap_helper','download');
    }
@@ -31,10 +31,10 @@ class Mahasiswa extends CI_Controller {
       }
 
       $data['page_header']   = $this->page_header;
-      $data['panel_heading'] = 'Mahasiswa List';
+      $data['panel_heading'] = 'Pertanyaan List';
       $data['page']         = '';
 
-      $this->template->backend('mahasiswa_v', $data);
+      $this->template->backend('pertanyaan_v', $data);
    }
    
    public function download($fileName = NULL)
@@ -50,17 +50,17 @@ class Mahasiswa extends CI_Controller {
       }
    }
 
-   public function get_mahasiswa()
+   public function get_pertanyaan()
    {
       if (!$this->ion_auth->logged_in()){            
          redirect('auth/login', 'refresh');
       }
 
-      $list = $this->mahasiswa->get_datatables();
+      $list = $this->pertanyaan->get_datatables();
       $data = array();
       $no = isset($_POST['start']) ? $_POST['start'] : 0;
       foreach ($list as $field) { 
-         $id = $field->nim;
+         $id = $field->pertanyaanID;
 
          $url_view   = 'view_data('.$id.');';
          $url_update = 'update_data('.$id.');';
@@ -70,10 +70,9 @@ class Mahasiswa extends CI_Controller {
          $row = array();
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
-         $row[] = $field->nim;
+         $row[] = $field->pertanyaanID;
          $row[] = $field->nama;
-         $row[] = $field->nama_prodi;
-         $row[] = $field->angkatan;
+         $row[] = $field->pertanyaan;
 
          $data[] = $row;
       }
@@ -82,8 +81,8 @@ class Mahasiswa extends CI_Controller {
 
       $output = array(
          "draw" => $draw,
-         "recordsTotal" => $this->mahasiswa->count_rows(),
-         "recordsFiltered" => $this->mahasiswa->count_filtered(),
+         "recordsTotal" => $this->pertanyaan->count_rows(),
+         "recordsFiltered" => $this->pertanyaan->count_filtered(),
          "data" => $data,
       );
       echo json_encode($output);
@@ -96,20 +95,19 @@ class Mahasiswa extends CI_Controller {
          redirect('auth/login', 'refresh');
       }
 
-      $id = $this->input->post('nim');
+      $id = $this->input->post('pertanyaanID');
 
-      $query = $this->mahasiswa
-         ->with_programstudi('fields:nama_prodi')
-         ->where('nim', $id)
+      $query = $this->pertanyaan
+         ->with_group_pertanyaan('fields:nama')
+         ->where('pertanyaanID', $id)
          ->get();
 
       $data = array();
 
       if($query){
-         $data = array('nim' => $query->nim,
-            'nama' => $query->nama,
-            'prodiID' => $query->programstudi->nama_prodi,
-            'angkatan' => $query->angkatan);
+         $data = array('pertanyaanID' => $query->pertanyaanID,
+            'groupID' => $query->group_pertanyaan->nama,
+            'pertanyaan' => $query->pertanyaan);
       }
 
       echo json_encode($data);
@@ -121,35 +119,33 @@ class Mahasiswa extends CI_Controller {
          redirect('auth/login', 'refresh');
       }
 
-      $opt_prodi     = $this->prodi->as_dropdown('nama_prodi')->get_all();
+      $opt_group     = $this->group->as_dropdown('nama')->get_all();
 
       $row = array();
-      if($this->input->post('nim')){
-         $id      = $this->input->post('nim');
-         $query   = $this->mahasiswa->where('nim', $id)->get(); 
+      if($this->input->post('pertanyaanID')){
+         $id      = $this->input->post('pertanyaanID');
+         $query   = $this->pertanyaan->where('pertanyaanID', $id)->get(); 
          if($query){
             $row = array(
-               'nim'    => $query->nim,
-               'nama'   => $query->nama,
-               'prodiID' => $query->prodiID,
-               'angkatan' => $query->angkatan
+               'pertanyaanID'    => $query->pertanyaanID,
+               'groupID' => $query->groupID,
+               'pertanyaan'   => $query->pertanyaan
             );
          }
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->nim) ? 'update' : 'create'),
-             'nim' => form_input(array('name'=>'nim', 'id'=>'nim', 'class'=>'form-control', 'value'=>!empty($row->nim) ? $row->nim : '')),
-             'nama' => form_input(array('name'=>'nama', 'id'=>'nama', 'class'=>'form-control', 'value'=>!empty($row->nama) ? $row->nama : '')),
-             'prodiID' => form_dropdown('prodiID', $opt_prodi, !empty($row->prodiID) ? $row->prodiID : '', 'class="chosen-select"'),
-             'angkatan' => form_input(array('name'=>'angkatan', 'id'=>'angkatan', 'class'=>'form-control', 'value'=>!empty($row->angkatan) ? $row->angkatan : ''))
+      $data = array('hidden'=> form_hidden('aksi', !empty($row->pertanyaanID) ? 'update' : 'create'),
+             'pertanyaanID' => form_input(array('name'=>'pertanyaanID', 'id'=>'pertanyaanID', 'class'=>'form-control', 'value'=>!empty($row->pertanyaanID) ? $row->pertanyaanID : '')),
+             'groupID' => form_dropdown('groupID', $opt_group, !empty($row->groupID) ? $row->groupID : '', 'class="chosen-select"'),
+             'pertanyaan' => form_input(array('name'=>'pertanyaan', 'id'=>'pertanyaan', 'class'=>'form-control', 'value'=>!empty($row->pertanyaan) ? $row->pertanyaan : ''))
             );
 
       echo json_encode($data);
    }
 
 
-   public function save_mahasiswa()
+   public function save_pertanyaan()
    {   
       if (!$this->ion_auth->logged_in()){            
          redirect('auth/login', 'refresh');
@@ -157,23 +153,20 @@ class Mahasiswa extends CI_Controller {
       
       $rules = array(
             'insert' => array(                     
-                     array('field' => 'nim', 'label' => 'NIM', 'rules' => 'trim|required|is_unique[mahasiswa.nim]|max_length[8]'),
-                     array('field' => 'nama', 'label' => 'Nama', 'rules' => 'trim|required|max_length[150]'),
-                     array('field' => 'prodiID', 'label' => 'Nama Prodi', 'rules' => 'trim|required|max_length[150]'),
-                     array('field' => 'angkatan', 'label' => 'Angkatan', 'rules' => 'trim|required|max_length[150]')          
+                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|is_unique[pertanyaan.pertanyaanID]|max_length[8]'),
+                     array('field' => 'groupID', 'label' => 'Nama group', 'rules' => 'trim|required|max_length[150]'),
+                     array('field' => 'pertanyaan', 'label' => 'Pertanyaan', 'rules' => 'trim|required|max_length[150]')         
                      ),
             'update' => array(
-                     array('field' => 'nim', 'label' => 'NIM', 'rules' => 'trim|required|max_length[8]'),
-                     array('field' => 'nama', 'label' => 'Nama', 'rules' => 'trim|required|max_length[150]'),
-                     array('field' => 'prodiID', 'label' => 'Nama Prodi', 'rules' => 'trim|required|max_length[150]'),
-                     array('field' => 'angkatan', 'label' => 'Angkatan', 'rules' => 'trim|required|max_length[150]') 
+                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|max_length[8]'),
+                     array('field' => 'groupID', 'label' => 'Nama group', 'rules' => 'trim|required|max_length[150]'),
+                     array('field' => 'pertanyaan', 'label' => 'Pertanyaan', 'rules' => 'trim|required|max_length[150]')
                      )                   
             );
         
-      $row = array('nim' => $this->input->post('nim'),
-            'nama' => $this->input->post('nama'),
-            'prodiID' => $this->input->post('prodiID'),
-            'angkatan' => $this->input->post('angkatan'));
+      $row = array('pertanyaanID' => $this->input->post('pertanyaanID'),
+            'groupID' => $this->input->post('groupID'),
+            'pertanyaan' => $this->input->post('pertanyaan'));
       
       
       $code = 0;
@@ -184,7 +177,7 @@ class Mahasiswa extends CI_Controller {
 
          if ($this->form_validation->run() == true) {
             
-            $this->mahasiswa->insert($row);
+            $this->pertanyaan->insert($row);
 
             $error =  $this->db->error();
             if($error['code'] <> 0){
@@ -208,9 +201,9 @@ class Mahasiswa extends CI_Controller {
 
          if ($this->form_validation->run() == true) {
 
-            $id = $this->input->post('nim');
+            $id = $this->input->post('pertanyaanID');
 
-            $this->mahasiswa->where('nim', $id)->update($row);
+            $this->pertanyaan->where('pertanyaanID', $id)->update($row);
             
             $error =  $this->db->error();
             if($error['code'] <> 0){               
@@ -240,9 +233,9 @@ class Mahasiswa extends CI_Controller {
 
       $code = 0;
 
-      $id = $this->input->post('nim');
+      $id = $this->input->post('pertanyaanID');
 
-      $this->mahasiswa->where('nim', $id)->delete();
+      $this->pertanyaan->where('pertanyaanID', $id)->delete();
 
       $error =  $this->db->error();
       if($error['code'] <> 0){
@@ -309,19 +302,17 @@ class Mahasiswa extends CI_Controller {
                     
                                         
                     //$primarydata[$i]= $value['A'];
-                    $query = $this->mahasiswa->where('nim', $value['A'])->get();
+                    $query = $this->pertanyaan->where('pertanyaanID', $value['A'])->get();
                     if(!empty($query)){
-                        $updatedata[$i]['nim'] = $value['A'];
-                        $updatedata[$i]['nama'] = $value['B'];
-                        $updatedata[$i]['prodiID'] = $value['C'];
-                        $updatedata[$i]['angkatan'] = $value['D'];
+                        $updatedata[$i]['pertanyaanID'] = $value['A'];
+                        $updatedata[$i]['groupID'] = $value['B'];
+                        $updatedata[$i]['pertanyaan'] = $value['C'];
                         $updatedata[$i]['created_at'] = date('Y-m-d H:i:s');
                     }
                     else{
-                        $insertdata[$i]['nim'] = $value['A'];
-                        $insertdata[$i]['nama'] = $value['B'];
-                        $insertdata[$i]['prodiID'] = $value['C'];
-                        $insertdata[$i]['angkatan'] = $value['D'];
+                        $insertdata[$i]['pertanyaanID'] = $value['A'];
+                        $insertdata[$i]['groupID'] = $value['B'];
+                        $insertdata[$i]['pertanyaan'] = $value['C'];
                         $insertdata[$i]['created_at'] = date('Y-m-d H:i:s');
                     }
 
@@ -333,12 +324,12 @@ class Mahasiswa extends CI_Controller {
 
                 if(!empty($insertdata)){
                     $this->imp->setBatchImport($insertdata);
-                    $this->imp->importData('mahasiswa');
+                    $this->imp->importData('pertanyaan');
                 }
                 
                 if(!empty($updatedata)){
                     $this->imp->setBatchUpdate($updatedata);
-                    $this->imp->updateData('mahasiswa','nim');
+                    $this->imp->updateData('pertanyaan','pertanyaanID');
                 }               
             }
             $error =  $this->db->error();

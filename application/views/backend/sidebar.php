@@ -41,52 +41,67 @@
     </li>
     <li>
         <a href="<?php echo site_url('mahasiswa');?>">
-            <i class="fa fa-users"></i> <span>Mahasiswa Management</span>
+            <i class="fa fa-users"></i> <span>Mahasiswa</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('dosen');?>">
-            <i class="fa fa-users"></i> <span>Dosen Management</span>
+            <i class="fa fa-users"></i> <span>Dosen</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('prodi');?>">
-            <i class="fa fa-users"></i> <span>Program Studi Management</span>
+            <i class="fa fa-users"></i> <span>Program Studi</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('kelas');?>">
-            <i class="fa fa-users"></i> <span>Kelas Management</span>
+            <i class="fa fa-users"></i> <span>Kelas</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('thnAkademik');?>">
-            <i class="fa fa-users"></i> <span>Tahun Akademik Management</span>
+            <i class="fa fa-users"></i> <span>Tahun Akademik</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('mhsKelas');?>">
-            <i class="fa fa-users"></i> <span>Mahasiswa Kelas Management</span>
+            <i class="fa fa-users"></i> <span>Mahasiswa Kelas</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('dsnKelas');?>">
-            <i class="fa fa-users"></i> <span>Dosen Kelas Management</span>
+            <i class="fa fa-users"></i> <span>Dosen Kelas</span>
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo site_url('group');?>">
+            <i class="fa fa-users"></i> <span>Group Pertanyaan</span>
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo site_url('pertanyaan');?>">
+            <i class="fa fa-users"></i> <span>Pertanyaan</span>
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo site_url('pertanyaandosen');?>">
+            <i class="fa fa-users"></i> <span>Pertanyaan Dosen</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('products');?>">
-            <i class="fa fa-users"></i> <span>Products Management</span>
+            <i class="fa fa-users"></i> <span>Products</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('categories');?>">
-            <i class="fa fa-users"></i> <span>Categories Management</span>
+            <i class="fa fa-users"></i> <span>Categories</span>
         </a>
     </li>
     <li>
         <a href="<?php echo site_url('suppliers');?>">
-            <i class="fa fa-users"></i> <span>Suppliers Management</span>
+            <i class="fa fa-users"></i> <span>Suppliers</span>
         </a>
     </li>
     <li class="treeview">

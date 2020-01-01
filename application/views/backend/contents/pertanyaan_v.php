@@ -33,8 +33,8 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-lg-6">
-                            <button id="create" class="btn btn-primary btn-sm" title="Data Create" alt="Data Create" ><i class="glyphicon glyphicon-plus"></i> Tambah Mahasiswa</button>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-import"></i>Import Mahasiswa</button>
+                            <button id="create" class="btn btn-primary btn-sm" title="Data Create" alt="Data Create" ><i class="glyphicon glyphicon-plus"></i> Tambah Pertanyaan</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-import"></i>Import Pertanyaan</button>
                         </div>  
                     </div>
                 </div>  
@@ -43,11 +43,10 @@
                     <thead>
                         <tr>
                             <th style="width: 100px!important;">Action</th>
-                            <th>No</th>                            
-                            <th>NIM</th>
-                            <th>Nama</th>
-                            <th>Program Studi</th>
-                            <th>Angkatan</th>     
+                            <th>No</th>
+                            <th>Pertanyaan ID</th>                            
+                            <th>Nama Group</th>
+                            <th>Pertanyaan</th>     
                         </tr>
                     </thead>
                     <tbody>
@@ -56,11 +55,10 @@
                     <tfoot>
                         <tr>
                             <th>Action</th>
-                            <th>No</th>                            
-                            <th>NIM</th>
-                            <th>Nama</th>
-                            <th>Program Studi</th>
-                            <th>Angkatan</th>                          
+                            <th>No</th>
+                            <th>Pertanyaan ID</th>                            
+                            <th>Nama Group</th>
+                            <th>Pertanyaan</th>                          
                         </tr>
                     </tfoot>
                 </table>
@@ -75,20 +73,16 @@
                     <div id="hidden"></div>
                     <div id="js-config"></div>
                     <div class="form-group">
-                        <label>NIM</label>
-                        <div id="nim"></div>
+                        <label>Pertanyaan ID</label>
+                        <div id="pertanyaanID"></div>
                     </div>
                     <div class="form-group">
-                        <label>Nama</label>
-                        <div id="nama"></div>
+                        <label>Nama Group</label>
+                        <div id="groupID"></div>
                     </div>
                     <div class="form-group">
-                        <label>Program Studi</label>
-                        <div id="prodiID"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Angkatan</label>
-                        <div id="angkatan"></div>
+                        <label>Pertanyaan</label>
+                        <div id="pertanyaan"></div>
                     </div>
                 </div>
                 </div>
@@ -106,20 +100,16 @@
                 <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label>NIM</label>
-                        <p id="nim"></p>
+                        <label>Pertanyaan ID</label>
+                        <p id="pertanyaanID"></p>
                     </div>
                     <div class="form-group">
-                        <label>Nama</label>
-                        <p id="nama"></p>
+                        <label>Nama Group</label>
+                        <p id="groupID"></p>
                     </div>
                     <div class="form-group">
-                        <label>Program Studi</label>
-                        <p id="prodiID"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Angkatan</label>
-                        <p id="angkatan"></p>
+                        <label>Pertanyaan</label>
+                        <p id="pertanyaan"></p>
                     </div>
                 </div>
                 
@@ -142,7 +132,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Import Mahasiswa</h4>
+        <h4 class="modal-title">Import Pertanyaan</h4>
       </div>
       <div class="modal-body">
         <form role="form" method="POST" action="" id="import-data" enctype="multipart/form-data">
@@ -152,7 +142,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <a href="<?=base_url()?>assets/download/mahasiswa.xlsx" class="btn btn-success">Example Data Import Mahasiswa</a>
+        <a href="<?=base_url()?>assets/download/pertanyaan.xlsx" class="btn btn-success">Example Data Import Pertanyaan</a>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" name="import" id="import" class="btn btn-primary" data-dismiss="modal">Import</button>
       </div>
@@ -166,7 +156,7 @@
 
 
 <script type="text/javascript">
-    var site_url = site_url() + 'mahasiswa/';
+    var site_url = site_url() + 'pertanyaan/';
 
     var table;
     $(document).ready(function() {
@@ -180,7 +170,7 @@
             "order": [], 
             
             "ajax": {
-                "url": site_url + 'get_mahasiswa',
+                "url": site_url + 'get_pertanyaan',
                 "type": "POST"
             },
             
@@ -201,15 +191,14 @@
                 success: function(data){
                     $(".chosen-select").chosen("destroy");
                     form_data();
-                    $('.box-title').text('Create Mahasiswa');  
+                    $('.box-title').text('Create Pertanyaan');  
 
                     //data = JSON.parse(data);
                     $('#hidden').html(data.hidden);
                     $('#js-config').html(data.jsConfig);
-                    $('#nim').html(data.nim);
-                    $('#nama').html(data.nama);
-                    $('#prodiID').html(data.prodiID);
-                    $('#angkatan').html(data.angkatan);
+                    $('#pertanyaanID').html(data.pertanyaanID);
+                    $('#groupID').html(data.groupID);
+                    $('#pertanyaan').html(data.pertanyaan);
                     
                     $(".chosen-select").chosen();
                 }
@@ -218,7 +207,7 @@
 
         $('#submit').click(function() {
             $.ajax({
-                url : site_url + 'save_mahasiswa/',
+                url : site_url + 'save_pertanyaan/',
                 type: "POST",
                 data: new FormData($('#form-data')[0]),
                 dataType: "JSON",
@@ -278,16 +267,15 @@
         $('#form-data').hide();
         $('#form-view').hide();
 
-        $('.box-title').text('Mahasiswa List'); 
+        $('.box-title').text('Pertanyaan List'); 
     }
 
     function form_data()
     {
         $('#hidden').empty();
-        $('#nim').empty();
-        $('#nama').empty();
-        $('#prodiID').empty();
-        $('#angkatan').empty();
+        $('#pertanyaanID').empty();
+        $('#groupID').empty();
+        $('#pertanyaan').empty();
 
         $('#table-data').hide();
         $('#form-data').show();
@@ -297,23 +285,22 @@
     function form_view()
     {
         $('p#hidden').empty();
-        $('p#nim').empty();
-        $('p#nama').empty();
-        $('p#prodiID').empty();
-        $('p#angkatan').empty();
+        $('p#pertanyaanID').empty();
+        $('p#groupID').empty();
+        $('p#pertanyaan').empty();
 
         $('#table-data').hide();
         $('#form-data').hide();
         $('#form-view').show();
 
-        $('.box-title').text('View Mahasiswa'); 
+        $('.box-title').text('View Pertanyaan'); 
     }
 
     function view_data(id)
     {
          $.ajax({
             url: site_url + 'view/',
-            data: {'nim': id},
+            data: {'pertanyaanID': id},
             cache: false,
             type: "POST",
             success: function(data){
@@ -321,11 +308,10 @@
 
                 data = JSON.parse(data);
                 $('p#hidden').html(data.hidden);
-                $('p#nim').html(data.nim);
-                $('p#nama').html(data.nama);
-                $('p#prodiID').html(data.prodiID);
-                $('p#angkatan').html(data.angkatan);
-                 
+                $('p#pertanyaanID').html(data.pertanyaanID);
+                $('p#groupID').html(data.groupID);
+                $('p#pertanyaan').html(data.pertanyaan);
+              
             }
         }); 
     }
@@ -334,21 +320,20 @@
     {
          $.ajax({
             url: site_url + 'form_data/',
-            data: {'nim': id},
+            data: {'pertanyaanID': id},
             cache: false,
             type: "POST",
             success: function(data){
                 $(".chosen-select").chosen("destroy");
                 form_data();
-                $('.box-title').text('Update Mahasiswa'); 
+                $('.box-title').text('Update Pertanyaan'); 
                 
                 data = JSON.parse(data);
                 $('#hidden').html(data.hidden);
-                $('#nim').html(data.nim);
-                $('input[name=nim]').prop('readonly',true);
-                $('#nama').html(data.nama);
-                $('#prodiID').html(data.prodiID);
-                $('#angkatan').html(data.angkatan);
+                $('#pertanyaanID').html(data.pertanyaanID);
+                $('input[name=pertanyaanID]').prop('readonly',true);
+                $('#groupID').html(data.groupID);
+                $('#pertanyaan').html(data.pertanyaan);
                 
                 $(".chosen-select").chosen();                  
             }
@@ -361,7 +346,7 @@
         if (agree){
             $.ajax({
                 url: site_url + 'delete/',
-                data: {'nim':id},
+                data: {'pertanyaanID':id},
                 cache: false,
                 type: "POST",
                 dataType: "JSON", //Tidak Usah Memakai JSON.parse(data);
