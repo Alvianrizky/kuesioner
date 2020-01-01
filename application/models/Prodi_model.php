@@ -13,7 +13,9 @@ class Prodi_model extends MY_Model
         $this->fillable    = $this->column_search;
         $this->timestamps  = TRUE;
 
-        $this->has_many['mahasiswa'] = array('mahasiswa_model', 'nim', 'nim');
+        $this->has_many['mahasiswa'] = array('mahasiswa_model', 'prodiID', 'prodiID');
+        $this->has_many['group_pertanyaan'] = array('group_model', 'prodiID', 'prodiID');
+
 
 		parent::__construct();
 	}

@@ -2,8 +2,8 @@
 
 class Mahasiswa_model extends MY_Model
 {
-	protected $column_order = array(null, 'nim','nama','angkatan'); 
-    protected $column_search = array('nim','nama','angkatan');
+	protected $column_order = array(null, 'nim','nama','angkatan','prodiID'); 
+    protected $column_search = array('nim','nama','angkatan','programstudi.nama_prodi');
     protected $order = array('nim' => 'asc');
 
 	public function __construct()
@@ -14,6 +14,7 @@ class Mahasiswa_model extends MY_Model
         $this->timestamps = TRUE;
 
         $this->has_many['mahasiswa_kelas'] = array('MhsKelas_model', 'nim', 'nim');
+        $this->has_one['programstudi'] = array('Prodi_model', 'prodiID', 'prodiID');
 
 		parent::__construct();
 	
@@ -22,7 +23,10 @@ class Mahasiswa_model extends MY_Model
 	private function _get_datatables_query()
     {
         
+        $this->db->select($this->column_search);
+
         $this->db->from($this->table);
+        $this->db->join('programstudi', 'programstudi.prodiID=mahasiswa.prodiID');
 
         $i = 0;
         

@@ -18,7 +18,7 @@ class Mahasiswa extends CI_Controller {
       parent::__construct();
 
 
-      $this->load->model(array('Import_model'=> 'imp', 'Mahasiswa_model' => 'mahasiswa'));
+      $this->load->model(array('Import_model'=> 'imp', 'Mahasiswa_model' => 'mahasiswa', 'Prodi_model' => 'prodi'));
       $this->load->library(array('ion_auth', 'form_validation', 'template'));
       $this->load->helper('bootstrap_helper','download');
    }
@@ -72,6 +72,7 @@ class Mahasiswa extends CI_Controller {
          $row[] = $no;
          $row[] = $field->nim;
          $row[] = $field->nama;
+         $row[] = $field->nama_prodi;
          $row[] = $field->angkatan;
 
          $data[] = $row;
@@ -97,10 +98,17 @@ class Mahasiswa extends CI_Controller {
 
       $id = $this->input->post('nim');
 
-      $query = $this->mahasiswa->where('nim', $id)->get();
+      $query = $this->mahasiswa
+         ->with_programstudi('fields:nama_prodi')
+         ->where('nim', $id)
+         ->get();
+
+      $data = array();
+
       if($query){
          $data = array('nim' => $query->nim,
             'nama' => $query->nama,
+            'prodiID' => $query->programstudi->nama_prodi,
             'angkatan' => $query->angkatan);
       }
 
@@ -113,6 +121,8 @@ class Mahasiswa extends CI_Controller {
          redirect('auth/login', 'refresh');
       }
 
+      $opt_prodi     = $this->prodi->as_dropdown('nama_prodi')->get_all();
+
       $row = array();
       if($this->input->post('nim')){
          $id      = $this->input->post('nim');
@@ -121,6 +131,7 @@ class Mahasiswa extends CI_Controller {
             $row = array(
                'nim'    => $query->nim,
                'nama'   => $query->nama,
+               'prodiID' => $query->prodiID,
                'angkatan' => $query->angkatan
             );
          }
@@ -130,6 +141,7 @@ class Mahasiswa extends CI_Controller {
       $data = array('hidden'=> form_hidden('aksi', !empty($row->nim) ? 'update' : 'create'),
              'nim' => form_input(array('name'=>'nim', 'id'=>'nim', 'class'=>'form-control', 'value'=>!empty($row->nim) ? $row->nim : '')),
              'nama' => form_input(array('name'=>'nama', 'id'=>'nama', 'class'=>'form-control', 'value'=>!empty($row->nama) ? $row->nama : '')),
+             'prodiID' => form_dropdown('prodiID', $opt_prodi, !empty($row->prodiID) ? $row->prodiID : '', 'class="chosen-select"'),
              'angkatan' => form_input(array('name'=>'angkatan', 'id'=>'angkatan', 'class'=>'form-control', 'value'=>!empty($row->angkatan) ? $row->angkatan : ''))
             );
 
@@ -147,17 +159,20 @@ class Mahasiswa extends CI_Controller {
             'insert' => array(                     
                      array('field' => 'nim', 'label' => 'NIM', 'rules' => 'trim|required|is_unique[mahasiswa.nim]|max_length[8]'),
                      array('field' => 'nama', 'label' => 'Nama', 'rules' => 'trim|required|max_length[150]'),
+                     array('field' => 'prodiID', 'label' => 'Nama Prodi', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'angkatan', 'label' => 'Angkatan', 'rules' => 'trim|required|max_length[150]')          
                      ),
             'update' => array(
                      array('field' => 'nim', 'label' => 'NIM', 'rules' => 'trim|required|max_length[8]'),
                      array('field' => 'nama', 'label' => 'Nama', 'rules' => 'trim|required|max_length[150]'),
+                     array('field' => 'prodiID', 'label' => 'Nama Prodi', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'angkatan', 'label' => 'Angkatan', 'rules' => 'trim|required|max_length[150]') 
                      )                   
             );
         
       $row = array('nim' => $this->input->post('nim'),
             'nama' => $this->input->post('nama'),
+            'prodiID' => $this->input->post('prodiID'),
             'angkatan' => $this->input->post('angkatan'));
       
       

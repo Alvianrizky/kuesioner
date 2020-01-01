@@ -46,6 +46,7 @@
                             <th>No</th>                            
                             <th>NIM</th>
                             <th>Nama</th>
+                            <th>Program Studi</th>
                             <th>Angkatan</th>     
                         </tr>
                     </thead>
@@ -58,6 +59,7 @@
                             <th>No</th>                            
                             <th>NIM</th>
                             <th>Nama</th>
+                            <th>Program Studi</th>
                             <th>Angkatan</th>                          
                         </tr>
                     </tfoot>
@@ -79,6 +81,10 @@
                     <div class="form-group">
                         <label>Nama</label>
                         <div id="nama"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Program Studi</label>
+                        <div id="prodiID"></div>
                     </div>
                     <div class="form-group">
                         <label>Angkatan</label>
@@ -106,6 +112,10 @@
                     <div class="form-group">
                         <label>Nama</label>
                         <p id="nama"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Program Studi</label>
+                        <p id="prodiID"></p>
                     </div>
                     <div class="form-group">
                         <label>Angkatan</label>
@@ -198,6 +208,7 @@
                     $('#js-config').html(data.jsConfig);
                     $('#nim').html(data.nim);
                     $('#nama').html(data.nama);
+                    $('#prodiID').html(data.prodiID);
                     $('#angkatan').html(data.angkatan);
                     
                     $(".chosen-select").chosen();
@@ -275,6 +286,7 @@
         $('#hidden').empty();
         $('#nim').empty();
         $('#nama').empty();
+        $('#prodiID').empty();
         $('#angkatan').empty();
 
         $('#table-data').hide();
@@ -287,6 +299,7 @@
         $('p#hidden').empty();
         $('p#nim').empty();
         $('p#nama').empty();
+        $('p#prodiID').empty();
         $('p#angkatan').empty();
 
         $('#table-data').hide();
@@ -310,6 +323,7 @@
                 $('p#hidden').html(data.hidden);
                 $('p#nim').html(data.nim);
                 $('p#nama').html(data.nama);
+                $('p#prodiID').html(data.prodiID);
                 $('p#angkatan').html(data.angkatan);
                  
             }
@@ -333,6 +347,7 @@
                 $('#nim').html(data.nim);
                 $('input[name=npp]').prop('readonly',true);
                 $('#nama').html(data.nama);
+                $('#prodiID').html(data.prodiID);
                 $('#angkatan').html(data.angkatan);
                 
                 $(".chosen-select").chosen();                  
