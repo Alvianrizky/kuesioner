@@ -33,8 +33,8 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-lg-6">
-                            <button id="create" class="btn btn-primary btn-sm" title="Data Create" alt="Data Create" ><i class="glyphicon glyphicon-plus"></i> Tambah Mahasiswa</button>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-import"></i>Import Mahasiswa</button>
+                            <button id="create" class="btn btn-primary btn-sm" title="Data Create" alt="Data Create" ><i class="glyphicon glyphicon-plus"></i> Tambah Group</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-import"></i>Import Group</button>
                         </div>  
                     </div>
                 </div>  
@@ -44,10 +44,11 @@
                         <tr>
                             <th style="width: 100px!important;">Action</th>
                             <th>No</th>                            
-                            <th>NIM</th>
-                            <th>Nama</th>
+                            <th>Group ID</th>
                             <th>Program Studi</th>
-                            <th>Angkatan</th>     
+                            <th>Nama</th>
+                            <th>Jawaban</th>
+                            <th>Nilai</th>     
                         </tr>
                     </thead>
                     <tbody>
@@ -57,10 +58,11 @@
                         <tr>
                             <th>Action</th>
                             <th>No</th>                            
-                            <th>NIM</th>
-                            <th>Nama</th>
+                            <th>Group ID</th>
                             <th>Program Studi</th>
-                            <th>Angkatan</th>                          
+                            <th>Nama</th>
+                            <th>Jawaban</th>
+                            <th>Nilai</th>                          
                         </tr>
                     </tfoot>
                 </table>
@@ -75,20 +77,24 @@
                     <div id="hidden"></div>
                     <div id="js-config"></div>
                     <div class="form-group">
-                        <label>NIM</label>
-                        <div id="nim"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Nama</label>
-                        <div id="nama"></div>
+                        <label>Group ID</label>
+                        <div id="groupID"></div>
                     </div>
                     <div class="form-group">
                         <label>Program Studi</label>
                         <div id="prodiID"></div>
                     </div>
                     <div class="form-group">
-                        <label>Angkatan</label>
-                        <div id="angkatan"></div>
+                        <label>Nama</label>
+                        <div id="nama"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Jawaban</label>
+                        <div id="jawaban"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai</label>
+                        <div id="nilai"></div>
                     </div>
                 </div>
                 </div>
@@ -106,20 +112,24 @@
                 <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label>NIM</label>
-                        <p id="nim"></p>
-                    </div>
-                    <div class="form-group">
-                        <label>Nama</label>
-                        <p id="nama"></p>
+                        <label>Group ID</label>
+                        <p id="groupID"></p>
                     </div>
                     <div class="form-group">
                         <label>Program Studi</label>
                         <p id="prodiID"></p>
                     </div>
                     <div class="form-group">
-                        <label>Angkatan</label>
-                        <p id="angkatan"></p>
+                        <label>Nama</label>
+                        <p id="nama"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Jawaban</label>
+                        <p id="jawaban"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai</label>
+                        <p id="nilai"></p>
                     </div>
                 </div>
                 
@@ -142,7 +152,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Import Mahasiswa</h4>
+        <h4 class="modal-title">Import Group</h4>
       </div>
       <div class="modal-body">
         <form role="form" method="POST" action="" id="import-data" enctype="multipart/form-data">
@@ -152,7 +162,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <a href="<?=base_url()?>assets/download/mahasiswa.xlsx" class="btn btn-success">Example Data Import Mahasiswa</a>
+        <a href="<?=base_url()?>assets/download/group.xlsx" class="btn btn-success">Example Data Import Group</a>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" name="import" id="import" class="btn btn-primary" data-dismiss="modal">Import</button>
       </div>
@@ -166,7 +176,7 @@
 
 
 <script type="text/javascript">
-    var site_url = site_url() + 'mahasiswa/';
+    var site_url = site_url() + 'group/';
 
     var table;
     $(document).ready(function() {
@@ -180,7 +190,7 @@
             "order": [], 
             
             "ajax": {
-                "url": site_url + 'get_mahasiswa',
+                "url": site_url + 'get_group',
                 "type": "POST"
             },
             
@@ -201,15 +211,16 @@
                 success: function(data){
                     $(".chosen-select").chosen("destroy");
                     form_data();
-                    $('.box-title').text('Create Mahasiswa');  
+                    $('.box-title').text('Create Group');  
 
                     //data = JSON.parse(data);
                     $('#hidden').html(data.hidden);
                     $('#js-config').html(data.jsConfig);
-                    $('#nim').html(data.nim);
-                    $('#nama').html(data.nama);
+                    $('#groupID').html(data.groupID);
                     $('#prodiID').html(data.prodiID);
-                    $('#angkatan').html(data.angkatan);
+                    $('#nama').html(data.nama);
+                    $('#jawaban').html(data.jawaban);
+                    $('#nilai').html(data.nilai);
                     
                     $(".chosen-select").chosen();
                 }
@@ -218,7 +229,7 @@
 
         $('#submit').click(function() {
             $.ajax({
-                url : site_url + 'save_mahasiswa/',
+                url : site_url + 'save_group/',
                 type: "POST",
                 data: new FormData($('#form-data')[0]),
                 dataType: "JSON",
@@ -278,16 +289,17 @@
         $('#form-data').hide();
         $('#form-view').hide();
 
-        $('.box-title').text('Mahasiswa List'); 
+        $('.box-title').text('Group List'); 
     }
 
     function form_data()
     {
         $('#hidden').empty();
-        $('#nim').empty();
-        $('#nama').empty();
+        $('#groupID').empty();
         $('#prodiID').empty();
-        $('#angkatan').empty();
+        $('#nama').empty();
+        $('#jawaban').empty();
+        $('#nilai').empty();
 
         $('#table-data').hide();
         $('#form-data').show();
@@ -297,23 +309,24 @@
     function form_view()
     {
         $('p#hidden').empty();
-        $('p#nim').empty();
-        $('p#nama').empty();
+        $('p#groupID').empty();
         $('p#prodiID').empty();
-        $('p#angkatan').empty();
+        $('p#nama').empty();
+        $('p#jawaban').empty();
+        $('p#nilai').empty();
 
         $('#table-data').hide();
         $('#form-data').hide();
         $('#form-view').show();
 
-        $('.box-title').text('View Mahasiswa'); 
+        $('.box-title').text('View Group'); 
     }
 
     function view_data(id)
     {
          $.ajax({
             url: site_url + 'view/',
-            data: {'nim': id},
+            data: {'groupID': id},
             cache: false,
             type: "POST",
             success: function(data){
@@ -321,10 +334,11 @@
 
                 data = JSON.parse(data);
                 $('p#hidden').html(data.hidden);
-                $('p#nim').html(data.nim);
-                $('p#nama').html(data.nama);
+                $('p#groupID').html(data.groupID);
                 $('p#prodiID').html(data.prodiID);
-                $('p#angkatan').html(data.angkatan);
+                $('p#nama').html(data.nama);
+                $('p#jawaban').html(data.jawaban);
+                $('p#nilai').html(data.nilai);
                  
             }
         }); 
@@ -334,7 +348,7 @@
     {
          $.ajax({
             url: site_url + 'form_data/',
-            data: {'nim': id},
+            data: {'groupID': id},
             cache: false,
             type: "POST",
             success: function(data){
@@ -344,11 +358,12 @@
                 
                 data = JSON.parse(data);
                 $('#hidden').html(data.hidden);
-                $('#nim').html(data.nim);
-                $('input[name=nim]').prop('readonly',true);
-                $('#nama').html(data.nama);
+                $('#groupID').html(data.groupID);
+                $('input[name=groupID]').prop('readonly',true);
                 $('#prodiID').html(data.prodiID);
-                $('#angkatan').html(data.angkatan);
+                $('#nama').html(data.nama);
+                $('#jawaban').html(data.jawaban);
+                $('#nilai').html(data.nilai);
                 
                 $(".chosen-select").chosen();                  
             }
@@ -361,7 +376,7 @@
         if (agree){
             $.ajax({
                 url: site_url + 'delete/',
-                data: {'nim':id},
+                data: {'groupID':id},
                 cache: false,
                 type: "POST",
                 dataType: "JSON", //Tidak Usah Memakai JSON.parse(data);
