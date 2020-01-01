@@ -74,7 +74,7 @@
                     <div id="js-config"></div>
                     <div class="form-group">
                         <label>ID</label>
-                        <div id="id"></div>
+                        <div id="prodiID"></div>
                     </div>
                     <div class="form-group">
                         <label>Program Studi</label>
@@ -101,7 +101,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label>ID</label>
-                        <p id="id"></p>
+                        <p id="prodiID"></p>
                     </div>
                     <div class="form-group">
                         <label>Program Studi</label>
@@ -193,7 +193,7 @@
                     //data = JSON.parse(data);
                     $('#hidden').html(data.hidden);
                     $('#js-config').html(data.jsConfig);
-                    $('#id').html(data.id);
+                    $('#prodiID').html(data.prodiID);
                     $('#nama_prodi').html(data.nama_prodi);
                     $('#jenjang').html(data.jenjang);
                     
@@ -270,7 +270,7 @@
     function form_data()
     {
         $('#hidden').empty();
-        $('#id').empty();
+        $('#prodiID').empty();
         $('#nama_prodi').empty();
         $('#jenjang').empty();
 
@@ -282,7 +282,7 @@
     function form_view()
     {
         $('p#hidden').empty();
-        $('p#id').empty();
+        $('p#prodiID').empty();
         $('p#nama_prodi').empty();
         $('p#jenjang').empty();
 
@@ -297,7 +297,7 @@
     {
          $.ajax({
             url: site_url + 'view/',
-            data: {'id': id},
+            data: {'prodiID': id},
             cache: false,
             type: "POST",
             success: function(data){
@@ -305,7 +305,7 @@
 
                 data = JSON.parse(data);
                 $('p#hidden').html(data.hidden);
-                $('p#id').html(data.id);
+                $('p#prodiID').html(data.prodiID);
                 $('p#nama_prodi').html(data.nama_prodi);
                 $('p#jenjang').html(data.jenjang);
                  
@@ -317,7 +317,7 @@
     {
          $.ajax({
             url: site_url + 'form_data/',
-            data: {'id': id},
+            data: {'prodiID': id},
             cache: false,
             type: "POST",
             success: function(data){
@@ -327,8 +327,8 @@
                 
                 data = JSON.parse(data);
                 $('#hidden').html(data.hidden);
-                $('#id').html(data.id);
-                $('input[name=id]').prop('readonly',true);
+                $('#prodiID').html(data.prodiID);
+                $('input[name=prodiID]').prop('readonly',true);
                 $('#nama_prodi').html(data.nama_prodi);
                 $('#jenjang').html(data.jenjang);
                 
@@ -343,7 +343,7 @@
         if (agree){
             $.ajax({
                 url: site_url + 'delete/',
-                data: {'id':id},
+                data: {'prodiID':id},
                 cache: false,
                 type: "POST",
                 dataType: "JSON", //Tidak Usah Memakai JSON.parse(data);

@@ -2,14 +2,14 @@
 
 class Prodi_model extends MY_Model
 {
-	protected $column_order = array(null, 'id','nama_prodi','jenjang'); 
-    protected $column_search = array('id','nama_prodi','jenjang');
-    protected $order = array('id' => 'asc');
+	protected $column_order = array(null, 'prodiID','nama_prodi','jenjang'); 
+    protected $column_search = array('prodiID','nama_prodi','jenjang');
+    protected $order = array('prodiID' => 'asc');
         
 	public function __construct()
 	{
         $this->table       = 'programstudi';
-        $this->primary_key = 'id';
+        $this->primary_key = 'prodiID';
         $this->fillable    = $this->column_search;
         $this->timestamps  = TRUE;
 

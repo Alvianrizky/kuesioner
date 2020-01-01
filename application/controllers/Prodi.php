@@ -60,7 +60,7 @@ class Prodi extends CI_Controller {
       $data = array();
       $no = isset($_POST['start']) ? $_POST['start'] : 0;
       foreach ($list as $field) { 
-         $id = $field->id;
+         $id = $field->prodiID;
 
          $url_view   = 'view_data('.$id.');';
          $url_update = 'update_data('.$id.');';
@@ -70,7 +70,7 @@ class Prodi extends CI_Controller {
          $row = array();
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
-         $row[] = $field->id;
+         $row[] = $field->prodiID;
          $row[] = $field->nama_prodi;
          $row[] = $field->jenjang;
 
@@ -95,13 +95,13 @@ class Prodi extends CI_Controller {
          redirect('auth/login', 'refresh');
       }
 
-      $id = $this->input->post('id');
+      $id = $this->input->post('prodiID');
 
-     $query = $this->prodi->where('id', $id)->get();
+     $query = $this->prodi->where('prodiID', $id)->get();
 
       $data = array();
       if($query){
-         $data = array('id' => $query->id,
+         $data = array('prodiID' => $query->prodiID,
             'nama_prodi' => $query->nama_prodi,
             'jenjang'      => $query->jenjang
          );
@@ -117,12 +117,12 @@ class Prodi extends CI_Controller {
       }
 
       $row = array();
-      if($this->input->post('id')){
-         $id      = $this->input->post('id');
-         $query   = $this->prodi->where('id', $id)->get(); 
+      if($this->input->post('prodiID')){
+         $id      = $this->input->post('prodiID');
+         $query   = $this->prodi->where('prodiID', $id)->get(); 
          if($query){
             $row = array(
-            'id'       => $query->id,
+            'prodiID'       => $query->prodiID,
             'nama_prodi'     => $query->nama_prodi,
             'jenjang'      => $query->jenjang
             );
@@ -130,8 +130,8 @@ class Prodi extends CI_Controller {
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->id) ? 'update' : 'create'),
-             'id' => form_input(array('name'=>'id', 'id'=>'id', 'class'=>'form-control', 'value'=>!empty($row->id) ? $row->id : '')),
+      $data = array('hidden'=> form_hidden('aksi', !empty($row->prodiID) ? 'update' : 'create'),
+             'prodiID' => form_input(array('name'=>'prodiID', 'id'=>'prodiID', 'class'=>'form-control', 'value'=>!empty($row->prodiID) ? $row->prodiID : '')),
              'nama_prodi' => form_input(array('name'=>'nama_prodi', 'id'=>'nama_prodi', 'class'=>'form-control', 'value'=>!empty($row->nama_prodi) ? $row->nama_prodi : '')),
              'jenjang' => form_input(array('name'=>'jenjang', 'id'=>'jenjang', 'class'=>'form-control', 'value'=>!empty($row->jenjang) ? $row->jenjang : ''))
             );
@@ -148,18 +148,18 @@ class Prodi extends CI_Controller {
 
       $rules = array(
          'insert' => array(                     
-                  array('field' => 'id', 'label' => 'ID', 'rules' => 'trim|required|is_unique[programstudi.id]|max_length[5]'),
+                  array('field' => 'prodiID', 'label' => 'prodiID', 'rules' => 'trim|required|is_unique[programstudi.prodiID]|max_length[5]'),
                   array('field' => 'nama_prodi', 'label' => 'Program Studi', 'rules' => 'trim|required|max_length[150]'),
                   array('field' => 'jenjang', 'label' => 'Jenjang', 'rules' => 'trim|required|max_length[20]')         
                   ),
          'update' => array(
-                  array('field' => 'id', 'label' => 'ID', 'rules' => 'trim|required|max_length[5]'),
+                  array('field' => 'prodiID', 'label' => 'prodiID', 'rules' => 'trim|required|max_length[5]'),
                   array('field' => 'nama_prodi', 'label' => 'Program Studi', 'rules' => 'trim|required|max_length[150]'),
                   array('field' => 'jenjang', 'label' => 'Jenjang', 'rules' => 'trim|required|max_length[20]')
                   )                  
          );
         
-      $row = array('id' => $this->input->post('id'),
+      $row = array('prodiID' => $this->input->post('prodiID'),
             'nama_prodi' => $this->input->post('nama_prodi'),
             'jenjang' => $this->input->post('jenjang'));
 
@@ -195,9 +195,9 @@ class Prodi extends CI_Controller {
 
          if ($this->form_validation->run() == true) {
 
-            $id = $this->input->post('id');
+            $id = $this->input->post('prodiID');
 
-            $this->prodi->where('id', $id)->update($row);
+            $this->prodi->where('prodiID', $id)->update($row);
             
             $error =  $this->db->error();
             if($error['code'] <> 0){               
@@ -227,9 +227,9 @@ class Prodi extends CI_Controller {
 
       $code = 0;
 
-      $id = $this->input->post('id');
+      $id = $this->input->post('prodiID');
 
-      $this->prodi->where('id', $id)->delete();
+      $this->prodi->where('prodiID', $id)->delete();
 
       $error =  $this->db->error();
       if($error['code'] <> 0){
@@ -296,15 +296,15 @@ class Prodi extends CI_Controller {
                     
                                         
                     //$primarydata[$i]= $value['A'];
-                    $query = $this->prodi->where('id', $value['A'])->get();
+                    $query = $this->prodi->where('prodiID', $value['A'])->get();
                     if(!empty($query)){
-                        $updatedata[$i]['id'] = $value['A'];
+                        $updatedata[$i]['prodiID'] = $value['A'];
                         $updatedata[$i]['nama_prodi'] = $value['B'];
                         $updatedata[$i]['jenjang'] = $value['C'];
                         $updatedata[$i]['created_at'] = date('Y-m-d H:i:s');
                     }
                     else{
-                        $insertdata[$i]['id'] = $value['A'];
+                        $insertdata[$i]['prodiID'] = $value['A'];
                         $insertdata[$i]['nama_prodi'] = $value['B'];
                         $insertdata[$i]['jenjang'] = $value['C'];
                         $insertdata[$i]['created_at'] = date('Y-m-d H:i:s');
