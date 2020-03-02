@@ -70,7 +70,6 @@ class Pertanyaan extends CI_Controller {
          $row = array();
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
-         $row[] = $field->pertanyaanID;
          $row[] = $field->nama;
          $row[] = $field->pertanyaan;
 
@@ -135,8 +134,7 @@ class Pertanyaan extends CI_Controller {
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->pertanyaanID) ? 'update' : 'create'),
-             'pertanyaanID' => form_input(array('name'=>'pertanyaanID', 'id'=>'pertanyaanID', 'class'=>'form-control', 'value'=>!empty($row->pertanyaanID) ? $row->pertanyaanID : '')),
+      $data = array('hidden'=> form_hidden('pertanyaanID', !empty($row->pertanyaanID) ? $row->pertanyaanID : ''),
              'groupID' => form_dropdown('groupID', $opt_group, !empty($row->groupID) ? $row->groupID : '', 'class="chosen-select"'),
              'pertanyaan' => form_input(array('name'=>'pertanyaan', 'id'=>'pertanyaan', 'class'=>'form-control', 'value'=>!empty($row->pertanyaan) ? $row->pertanyaan : ''))
             );
@@ -153,7 +151,6 @@ class Pertanyaan extends CI_Controller {
       
       $rules = array(
             'insert' => array(                     
-                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|is_unique[pertanyaan.pertanyaanID]|max_length[8]'),
                      array('field' => 'groupID', 'label' => 'Nama group', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'pertanyaan', 'label' => 'Pertanyaan', 'rules' => 'trim|required|max_length[150]')         
                      ),
@@ -164,14 +161,13 @@ class Pertanyaan extends CI_Controller {
                      )                   
             );
         
-      $row = array('pertanyaanID' => $this->input->post('pertanyaanID'),
-            'groupID' => $this->input->post('groupID'),
+      $row = array('groupID' => $this->input->post('groupID'),
             'pertanyaan' => $this->input->post('pertanyaan'));
       
       
       $code = 0;
 
-      if($this->input->post('aksi') == 'create'){
+      if($this->input->post('pertanyaanID') == null){
 
          $this->form_validation->set_rules($rules['insert']);
 

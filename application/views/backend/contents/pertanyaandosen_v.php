@@ -73,11 +73,8 @@
                     <div id="hidden"></div>
                     <div id="js-config"></div>
                     <div class="form-group">
-                        <label>Pertanyaan ID</label>
-                        <div id="pertanyaanID"></div>
-                    </div>
-                    <div class="form-group">
                         <label>Nama Group</label>
+                        <input type="hidden" id="pertanyaanID">
                         <div id="groupID"></div>
                     </div>
                     <div class="form-group">

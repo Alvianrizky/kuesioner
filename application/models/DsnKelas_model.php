@@ -56,6 +56,25 @@ class DsnKelas_model extends MY_Model
             }
         }
         
+        $where = array();
+        if(isset($_POST['columns'])){
+            $i = 0;
+            foreach ($this->column_search as $item)
+            {
+                if ( isset($_POST['columns'][$i]) && $_POST['columns'][$i]['search']['value'] != '' ) 
+                {
+                    $where[$item] = $_POST['columns'][$i]['search']['value'];
+                }
+                $i++;
+            }
+
+            if(count($where) > 0){
+                $this->db->group_start(); 
+                $this->db->like($where);
+                $this->db->group_end(); 
+            }
+        }
+
         if(isset($_POST['order']))
         {
             $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);

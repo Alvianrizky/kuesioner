@@ -3,7 +3,7 @@
 class PertanyaanDosen_model extends MY_Model
 {
 	protected $column_order = array(null, 'pertanyaanID','groupID','pertanyaan'); 
-    protected $column_search = array('pertanyaanID','group_pertanyaan.nama','pertanyaan');
+    protected $column_search = array('pertanyaanID','group_dosen.nama','pertanyaan');
     protected $order = array('pertanyaanID' => 'asc');
 
 	public function __construct()
@@ -13,7 +13,7 @@ class PertanyaanDosen_model extends MY_Model
         $this->fillable = $this->column_order;
         $this->timestamps = TRUE;
 
-        $this->has_one['group_pertanyaan'] = array('Group_model', 'groupID', 'groupID');
+        $this->has_one['group_dosen'] = array('Group_dosen', 'groupID', 'groupID');
 
 		parent::__construct();
 	
@@ -25,7 +25,7 @@ class PertanyaanDosen_model extends MY_Model
         $this->db->select($this->column_search);
 
         $this->db->from($this->table);
-        $this->db->join('group_pertanyaan', 'group_pertanyaan.groupID=pertanyaandosen.groupID');
+        $this->db->join('group_dosen', 'group_dosen.groupID=pertanyaandosen.groupID');
 
         $i = 0;
         

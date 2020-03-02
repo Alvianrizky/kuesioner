@@ -2,6 +2,13 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+require(FCPATH . 'vendor/autoload.php');
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
+
 class Mhskelas extends CI_Controller {
 
    protected $page_header = 'Mahasiswa Kelas Management';
@@ -11,7 +18,7 @@ class Mhskelas extends CI_Controller {
       parent::__construct();
 
 
-      $this->load->model(array('Kelas_model'=>'kelas', 'Mahasiswa_model'=>'mahasiswa', 'ThnAkademik_model'=>'akademik', 'MhsKelas_model' => 'mhskelas'));
+      $this->load->model(array('Kelas_model'=>'kelas', 'Mahasiswa_model'=>'mahasiswa', 'ThnAkademik_model'=>'akademik', 'MhsKelas_model' => 'mhskelas', 'Import_model' => 'imp'));
       $this->load->library(array('ion_auth', 'form_validation', 'template'));
       $this->load->helper('bootstrap_helper');
    }
@@ -50,7 +57,6 @@ class Mhskelas extends CI_Controller {
          $row = array();
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
-         $row[] = $field->mhsKelasID;
          $row[] = $field->nama_kelas;
          $row[] = $field->nama;
          $row[] = $field->thnAkademik;
@@ -104,8 +110,8 @@ class Mhskelas extends CI_Controller {
       }
 
       $opt_kelas     = $this->kelas->as_dropdown('nama_kelas')->get_all();
-      $opt_mahasiswa     = $this->mahasiswa->as_dropdown('nama')->get_all();
-      $opt_akademik     = $this->akademik->as_dropdown('thnAkademik')->get_all();
+      $opt_mahasiswa = $this->mahasiswa->as_dropdown('nama')->get_all();
+      $opt_akademik  = $this->akademik->as_dropdown('thnAkademik')->order_by('thnAkademikID', 'DESC')->get_all();
 
       $row = array();
       if($this->input->post('mhsKelasID')){
@@ -122,17 +128,49 @@ class Mhskelas extends CI_Controller {
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->mhsKelasID) ? 'update' : 'create'),
-             'mhsKelasID' => form_input(array('name'=>'mhsKelasID', 'id'=>'datepicker', 'class'=>'form-control', 'value'=>!empty($row->mhsKelasID) ? $row->mhsKelasID : '')),
+      $data = array('hidden'=> form_hidden('mhsKelasID', !empty($row->mhsKelasID) ? $row->mhsKelasID : ''),
              'kelasID' => form_dropdown('kelasID', $opt_kelas, !empty($row->kelasID) ? $row->kelasID : '', 'class="chosen-select"'),
-             'nim' => form_dropdown('nim', $opt_mahasiswa, !empty($row->nim) ? $row->nim : '', 'class="chosen-select", multiple="true"'),
-             'thnAkademikID' => form_dropdown('thnAkademikID', $opt_akademik, !empty($row->thnAkademikID) ? $row->thnAkademikID : '', 'class="chosen-select"')
+             'nim' => form_dropdown('nim', $opt_mahasiswa, !empty($row->nim) ? $row->nim : '', 'class="chosen-select"'),
+             'thnAkademikID' => form_dropdown('thnAkademikID', $opt_akademik, !empty($row->thnAkademikID) ? $row->thnAkademikID : '', 'class="form-control"')
             );
 
       echo json_encode($data);
    }
 
+   public function form_data_many()
+   {
+      if (!$this->ion_auth->logged_in()){            
+         redirect('auth/login', 'refresh');
+      }
 
+      $opt_kelas     = $this->kelas->as_dropdown('nama_kelas')->get_all();
+      $opt_mahasiswa = $this->mahasiswa->as_dropdown('nama')->get_all();
+      $opt_akademik  = $this->akademik->as_dropdown('thnAkademik')->order_by('thnAkademikID', 'DESC')->get_all();
+
+      $row = array();
+      if($this->input->post('mhsKelasID')){
+         $id      = $this->input->post('mhsKelasID');
+         $query   = $this->mhskelas->where('mhsKelasID', $id)->get(); 
+         if($query){
+            $row = array(
+            'mhsKelasID' => $query->mhsKelasID,
+            'kelasID'  => $query->kelasID,
+            'nim'      => $query->nim,
+            'thnAkademikID'  => $query->thnAkademikID
+            );
+         }
+         $row = (object) $row;
+      }
+
+      $data = array('hidden'=> form_hidden('mhsKelasID', !empty($row->mhsKelasID) ? $row->mhsKelasID : ''),
+             'kelasID' => form_dropdown('kelasID', $opt_kelas, !empty($row->kelasID) ? $row->kelasID : '', 'class="form-control"'),
+             'nim' => form_dropdown('nim[]', $opt_mahasiswa, !empty($row->nim) ? $row->nim : '', 'class="chosen-select", multiple="true"'),
+             'thnAkademikID' => form_dropdown('thnAkademikID', $opt_akademik, !empty($row->thnAkademikID) ? $row->thnAkademikID : '', 'class="form-control"')
+            );
+
+      echo json_encode($data);
+   }
+   
    public function save_mhskelas()
    {   
       if (!$this->ion_auth->logged_in()){            
@@ -141,7 +179,6 @@ class Mhskelas extends CI_Controller {
 
       $rules = array(
             'insert' => array(                     
-                     array('field' => 'mhsKelasID', 'label' => 'Mahasiswa Kelas ID', 'rules' => 'trim|required|is_unique[mahasiswa_kelas.mhsKelasID]|max_length[6]'), 
                      array('field' => 'kelasID', 'label' => 'Nama Kelas', 'rules' => 'max_length[11]'),
                      array('field' => 'nim', 'label' => 'Nama Mahasiswa', 'rules' => 'max_length[11]'),
                      array('field' => 'thnAkademikID', 'label' => 'Tahun Akademik', 'rules' => 'max_length[20]')
@@ -153,62 +190,101 @@ class Mhskelas extends CI_Controller {
                      array('field' => 'thnAkademikID', 'label' => 'Tahun Akademik', 'rules' => 'max_length[20]')
                      )                  
             );
-        
-      $row = array('mhsKelasID' => $this->input->post('mhsKelasID'),
-            'kelasID' => $this->input->post('kelasID'),
-            'nim' => $this->input->post('nim'),
-            'thnAkademikID'      => $this->input->post('thnAkademikID'));
-
+      
+      
+      $arrayNim = $this->input->post('nim');
       $code = 0;
 
-      if($this->input->post('aksi') == 'create'){
+      if(is_array($arrayNim))
+      {
+         $kelasID  = $this->input->post('kelasID');
+         $thnAkademikID = $this->input->post('thnAkademikID');
+         
+         $row = array();
+         
+         foreach ($arrayNim as $key => $value) {
+            $row[] = array('kelasID' => $kelasID,
+               'nim' => $value,
+               'thnAkademikID' => $thnAkademikID
+            ); 
+         }
+         
+         $this->mhskelas->where(array('kelasID'=>$kelasID, 'thnAkademikID'=>$thnAkademikID))->delete();
 
-         $this->form_validation->set_rules($rules['insert']);
-
-         if ($this->form_validation->run() == true) {
-            
+         $error =  $this->db->error();
+         
+         if($error['code'] <> 0){
+            $code = 1;
+            $notifications = $error['code'].' : '.$error['message'];
+         }
+         else{
             $this->mhskelas->insert($row);
 
             $error =  $this->db->error();
+
             if($error['code'] <> 0){
                $code = 1;
                $notifications = $error['code'].' : '.$error['message'];
             }
             else{
+               $error =  $this->db->error();
+               
                $notifications = 'Success Insert Data';
             }
          }
-         else{
-            $code = 1;
-            $notifications = validation_errors('<p>', '</p>'); 
-         }
-
       }
-
       else{
          
-         $this->form_validation->set_rules($rules['update']);
+         $row = array('kelasID' => $this->input->post('kelasID'),
+            'nim' => $this->input->post('nim'),
+            'thnAkademikID' => $this->input->post('thnAkademikID'));
 
-         if ($this->form_validation->run() == true) {
+         if($this->input->post('mhsKelasID') == null){
+            $this->form_validation->set_rules($rules['insert']);
 
-            $id = $this->input->post('mhsKelasID');
+            if ($this->form_validation->run() == true) {
+               
+               $this->mhskelas->insert($row);
 
-            $this->mhskelas->where('mhsKelasID', $id)->update($row);
-            
-            $error =  $this->db->error();
-            if($error['code'] <> 0){               
-               $code = 1;               
-               $notifications = $error['code'].' : '.$error['message'];
+               $error =  $this->db->error();
+               if($error['code'] <> 0){
+                  $code = 1;
+                  $notifications = $error['code'].' : '.$error['message'];
+               }
+               else{
+                  $notifications = 'Success Insert Data';
+               }
             }
-            else{               
-               $notifications = 'Success Update Data';
+            else{
+               $code = 1;
+               $notifications = validation_errors('<p>', '</p>'); 
             }
          }
          else{
-            $code = 1;
-            $notifications = validation_errors('<p>', '</p>'); 
+            
+            $this->form_validation->set_rules($rules['update']);
+
+            if ($this->form_validation->run() == true) {
+
+               $id = $this->input->post('mhsKelasID');
+
+               $this->mhskelas->where('mhsKelasID', $id)->update($row);
+               
+               $error =  $this->db->error();
+               if($error['code'] <> 0){               
+                  $code = 1;               
+                  $notifications = $error['code'].' : '.$error['message'];
+               }
+               else{               
+                  $notifications = 'Success Update Data';
+               }
+            }
+            else{
+               $code = 1;
+               $notifications = validation_errors('<p>', '</p>'); 
+            }
          }
-      }
+      }//else if is_array
 
       $notifications = ($code == 0) ? notifications('success', $notifications) : notifications('error', $notifications);
       
@@ -239,5 +315,233 @@ class Mhskelas extends CI_Controller {
       $notifications = ($code == 0) ? notifications('success', $notifications) : notifications('error', $notifications);
       
       echo json_encode(array('message' => $notifications, 'code' => $code));
-   }
+	}
+
+	public function export()
+	{
+		$filename = urlencode("Data" . date('ymdhis') . ".xls");
+
+		$fields = $this->db->field_data('dosen');
+
+		$this->load->model('Dosen_model', 'dosen');
+
+		$getmahasiswa = $this->mahasiswa->get_all();
+		$getkelas = $this->kelas->get_all();
+		$getakademik = $this->akademik->get_all();
+		// Create new Spreadsheet object
+		$spreadsheet = new Spreadsheet();
+
+		// Set document properties
+
+		// Add some data
+
+
+
+		$spreadsheet->setActiveSheetIndex(0)
+			->setCellValue('A1', 'Kelas ID')
+			->setCellValue('B1', 'NIM')
+			->setCellValue('C1', 'Tahun Akademik ID')
+			->setCellValue('E1', 'Data Mahasiswa')
+			->setCellValue('E2', 'NIM')
+			->setCellValue('F2', 'Nama Mahasiswa')
+			->setCellValue('H1', 'Data Kelas')
+			->setCellValue('H2', 'Kelas ID')
+			->setCellValue('I2', 'Nama Kelas')
+			->setCellValue('K1', 'Data Tahun Akademik')
+			->setCellValue('K2', 'Tahun Akademik ID')
+			->setCellValue('L2', 'Tahun Akademik')
+			->setCellValue('M2', 'Status')
+			->mergeCells('H1:I1')
+			->mergeCells('E1:F1');
+
+		$spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+		$spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+
+		$spreadsheet->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal('left');
+		$spreadsheet->getActiveSheet()->getStyle('E')->getFont()->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal('left');
+		$spreadsheet->getActiveSheet()->getStyle('H')->getFont()->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('H2')->getFont()->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal('left');
+		$spreadsheet->getActiveSheet()->getStyle('K')->getFont()->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('K2')->getFont()->setBold(true);
+
+
+		$x = 3;
+
+		foreach ($getmahasiswa as $get) {
+			$spreadsheet->setActiveSheetIndex(0)
+				->setCellValue('E' . $x, $get->nim)
+				->setCellValue('F' . $x, $get->nama);
+			$x++;
+		}
+
+		$y = 3;
+
+		foreach ($getkelas as $get) {
+			$spreadsheet->setActiveSheetIndex(0)
+				->setCellValue('H' . $y, $get->kelasID)
+				->setCellValue('I' . $y, $get->nama_kelas);
+			$y++;
+		}
+
+		$z = 3;
+
+		foreach ($getakademik as $get) {
+			$spreadsheet->setActiveSheetIndex(0)
+				->setCellValue('K' . $z, $get->thnAkademikID)
+				->setCellValue('L' . $z, $get->thnAkademik)
+				->setCellValue('M' . $z, $get->status);
+			$z++;
+		}
+
+
+
+		// Rename worksheet
+		$spreadsheet->getActiveSheet()->setTitle('Simple');
+
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$spreadsheet->setActiveSheetIndex(0);
+
+		// Redirect output to a client’s web browser (Xlsx)
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+		// If you're serving to IE 9, then the following may be needed
+		header('Cache-Control: max-age=1');
+
+		// If you're serving to IE over SSL, then the following may be needed
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+		header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+		header('Pragma: public'); // HTTP/1.0
+
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+		$writer->save('php://output');
+		exit;
+	}
+
+	public function upload()
+	{
+		$data = array();
+		$data['title'] = 'Import Excel Sheet | TechArise';
+		$data['breadcrumbs'] = array('Home' => '#');
+		date_default_timezone_set('asia/jakarta');
+		$code = 0;
+
+		$this->form_validation->set_rules('fileURL', 'Upload File', 'callback_checkFileValidation');
+
+		if ($this->form_validation->run() == false) {
+			$code = 1;
+			$notifications = validation_errors('<p>', '</p>');
+		} else {
+			if (!empty($_FILES['fileURL']['name'])) {
+				$extension = pathinfo($_FILES['fileURL']['name'], PATHINFO_EXTENSION);
+				if ($extension == 'csv') {
+					$reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+				} elseif ($extension == 'xlsx') {
+					$reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+				} else {
+					$reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+				}
+
+
+				$spreadsheet = $reader->load($_FILES['fileURL']['tmp_name']);
+				$allDataInSheet = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+
+				$flag = true;
+				$i = 0;
+				$updatedata = array();
+				//$primarydata = array();
+				foreach ($allDataInSheet as $value) {
+					if ($flag) {
+						$flag = false;
+						continue;
+					}
+
+
+					//$primarydata[$i]= $value['A'];
+					$query = $this->mhskelas->where('nim', $value['B'])->get();
+					if (!empty($query)) {
+						$updatedata[$i]['kelasID'] = $value['A'];
+						$updatedata[$i]['nim'] = $value['B'];
+						$updatedata[$i]['thnAkademikID'] = $value['C'];
+						$updatedata[$i]['updated_at'] = date('Y-m-d H:i:s');
+					} else {
+						$insertdata[$i]['kelasID'] = $value['A'];
+						$insertdata[$i]['nim'] = $value['B'];
+						$insertdata[$i]['thnAkademikID'] = $value['C'];
+						$insertdata[$i]['created_at'] = date('Y-m-d H:i:s');
+					}
+
+
+					//$data = array('hidden'=> form_hidden('aksi', !empty($row->mhsKelasID) ? 'update' : 'create'));
+
+					$i++;
+				}
+
+				if (!empty($insertdata)) {
+					$this->imp->setBatchImport($insertdata);
+					$this->imp->importData('mahasiswa_kelas');
+				}
+
+				if (!empty($updatedata)) {
+					$this->imp->setBatchUpdate($updatedata);
+					$this->imp->updateData('mahasiswa_kelas', 'nim');
+				}
+			}
+			$error =  $this->db->error();
+			if ($error['code'] <> 0) {
+				$code = 1;
+				$notifications = $error['code'] . ' : ' . $error['message'];
+			} else {
+				$notifications = 'Success Import Data';
+			}
+		}
+		$notifications = ($code == 0) ? notifications('success', $notifications) : notifications('error', $notifications);
+
+		echo json_encode(array('message' => $notifications, 'code' => $code));
+		//redirect('Import/import', 'refresh');
+	}
+
+	public function checkFileValidation($string)
+	{
+		$file_mimes = array(
+			'text/x-comma-separated-values',
+			'text/comma-separated-values',
+			'application/octet-stream',
+			'application/vnd.ms-excel',
+			'application/x-csv',
+			'text/x-csv',
+			'text/csv',
+			'application/csv',
+			'application/excel',
+			'application/vnd.msexcel',
+			'text/plain',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+		);
+		if (isset($_FILES['fileURL']['name'])) {
+			$arr_file = explode('.', $_FILES['fileURL']['name']);
+			$extension = end($arr_file);
+			if ($extension == 'xlsx' || $extension == 'xls' || $extension == 'csv' && in_array($_FILES['fileURL']['type'], $file_mimes)) {
+				return true;
+			} else {
+				$this->form_validation->set_message('checkFileValidation', 'Please choose correct file');
+				return false;
+			}
+		} else {
+			$this->form_validation->set_message('checkFileValidation', 'Please choose a file');
+			return false;
+		}
+	}
+
 }

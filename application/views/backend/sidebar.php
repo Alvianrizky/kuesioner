@@ -39,81 +39,71 @@
             <li><a href="<?php echo site_url('groups');?>"><i class="fa fa-circle-o"></i> Groups</a></li>
         </ul>
     </li>
-    <li>
-        <a href="<?php echo site_url('mahasiswa');?>">
-            <i class="fa fa-users"></i> <span>Mahasiswa</span>
+    <li class="treeview">
+        <a href="#">
+            <i class="fa fa-users"></i>
+             <span>Master Data</span>
+            <span class="label label-primary pull-right">4</span>
         </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('dosen');?>">
-            <i class="fa fa-users"></i> <span>Dosen</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('prodi');?>">
-            <i class="fa fa-users"></i> <span>Program Studi</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('kelas');?>">
-            <i class="fa fa-users"></i> <span>Kelas</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('thnAkademik');?>">
-            <i class="fa fa-users"></i> <span>Tahun Akademik</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('mhsKelas');?>">
-            <i class="fa fa-users"></i> <span>Mahasiswa Kelas</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('dsnKelas');?>">
-            <i class="fa fa-users"></i> <span>Dosen Kelas</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('group');?>">
-            <i class="fa fa-users"></i> <span>Group Pertanyaan</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('pertanyaan');?>">
-            <i class="fa fa-users"></i> <span>Pertanyaan</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('pertanyaandosen');?>">
-            <i class="fa fa-users"></i> <span>Pertanyaan Dosen</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('products');?>">
-            <i class="fa fa-users"></i> <span>Products</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('categories');?>">
-            <i class="fa fa-users"></i> <span>Categories</span>
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo site_url('suppliers');?>">
-            <i class="fa fa-users"></i> <span>Suppliers</span>
-        </a>
+        <ul class="treeview-menu">
+            <li><a href="<?php echo site_url('mahasiswa');?>"><i class="fa fa-circle-o"></i> Mahasiswa</a></li>          
+            <li><a href="<?php echo site_url('dosen');?>"><i class="fa fa-circle-o"></i> Dosen</a></li>
+            <li><a href="<?php echo site_url('prodi');?>"><i class="fa fa-circle-o"></i> Program Studi</a></li>
+            <li><a href="<?php echo site_url('thnAkademik');?>"><i class="fa fa-circle-o"></i> Tahun Akademik</a></li>
+        </ul>
     </li>
     <li class="treeview">
         <a href="#">
-            <i class="fa fa-files-o"></i>
-             <span>Export / Import </span>
-            <span class="label label-primary pull-right">2</span>
+            <i class="fa fa-users"></i>
+             <span>Kelas Management </span>
+            <span class="label label-primary pull-right">3</span>
         </a>
         <ul class="treeview-menu">
-            <li><a href="<?php echo site_url('PhpSpreadsheet');?>"><i class="fa fa-circle-o"></i> Php Spreadsheet</a></li>    
-            <li><a href="<?php echo site_url('Import/import');?>"><i class="fa fa-circle-o"></i> Import Php Spreadsheet</a></li>          
+            <li><a href="<?php echo site_url('kelas');?>"><i class="fa fa-circle-o"></i> Kelas</a></li>          
+            <li><a href="<?php echo site_url('mhsKelas');?>"><i class="fa fa-circle-o"></i> Mahasiswa Kelas</a></li>
+            <li><a href="<?php echo site_url('dsnKelas');?>"><i class="fa fa-circle-o"></i> Dosen Kelas</a></li>
         </ul>
+    </li>
+
+    <li class="treeview">
+        <a href="#">
+            <i class="fa fa-users"></i>
+             <span>Kuisoner Management </span>
+            <span class="label label-primary pull-right">4</span>
+        </a>
+        <ul class="treeview-menu">
+            <li>
+                <a href="<?php echo site_url('group');?>">
+                    <i class="fa fa-circle-o"></i> <span>Group Pertanyaan</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo site_url('groupdosen');?>">
+                    <i class="fa fa-circle-o"></i> <span>Group Dosen</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo site_url('pertanyaan');?>">
+                    <i class="fa fa-circle-o"></i> <span>Pertanyaan</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo site_url('pertanyaandosen');?>">
+                    <i class="fa fa-circle-o"></i> <span>Pertanyaan Dosen</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    
+    <li>
+        <a href="<?php echo site_url('hasildosen');?>">
+            <i class="fa fa-users"></i> <span>Hasil Dosen</span>
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo site_url('hasil');?>">
+            <i class="fa fa-users"></i> <span>Hasil Kuisoner</span>
+        </a>
     </li>
     <li class="header"></li>
     <li>

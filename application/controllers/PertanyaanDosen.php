@@ -18,7 +18,7 @@ class PertanyaanDosen extends CI_Controller {
       parent::__construct();
 
 
-      $this->load->model(array('Import_model'=> 'imp', 'Group_model' => 'group', 'PertanyaanDosen_model' => 'pertanyaan'));
+      $this->load->model(array('Import_model'=> 'imp', 'Group_dosen' => 'group', 'PertanyaanDosen_model' => 'pertanyaan'));
       $this->load->library(array('ion_auth', 'form_validation', 'template'));
       $this->load->helper('bootstrap_helper','download');
    }
@@ -135,8 +135,10 @@ class PertanyaanDosen extends CI_Controller {
          $row = (object) $row;
       }
 
+      $uni = "".date('ymdhis')."";
+
       $data = array('hidden'=> form_hidden('aksi', !empty($row->pertanyaanID) ? 'update' : 'create'),
-             'pertanyaanID' => form_input(array('name'=>'pertanyaanID', 'id'=>'pertanyaanID', 'class'=>'form-control', 'value'=>!empty($row->pertanyaanID) ? $row->pertanyaanID : '')),
+             'pertanyaanID' => form_input(array('name'=>'pertanyaanID', 'id'=>'pertanyaanID', 'class'=>'form-control', 'value'=>!empty($row->pertanyaanID) ? $row->pertanyaanID : $uni)),
              'groupID' => form_dropdown('groupID', $opt_group, !empty($row->groupID) ? $row->groupID : '', 'class="chosen-select"'),
              'pertanyaan' => form_input(array('name'=>'pertanyaan', 'id'=>'pertanyaan', 'class'=>'form-control', 'value'=>!empty($row->pertanyaan) ? $row->pertanyaan : ''))
             );
@@ -153,12 +155,12 @@ class PertanyaanDosen extends CI_Controller {
       
       $rules = array(
             'insert' => array(                     
-                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|is_unique[pertanyaandosen.pertanyaanID]|max_length[8]'),
+                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|is_unique[pertanyaandosen.pertanyaanID]|max_length[12]'),
                      array('field' => 'groupID', 'label' => 'Nama group', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'pertanyaan', 'label' => 'Pertanyaan', 'rules' => 'trim|required|max_length[150]')         
                      ),
             'update' => array(
-                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|max_length[8]'),
+                     array('field' => 'pertanyaanID', 'label' => 'pertanyaanID', 'rules' => 'trim|required|max_length[12]'),
                      array('field' => 'groupID', 'label' => 'Nama group', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'pertanyaan', 'label' => 'Pertanyaan', 'rules' => 'trim|required|max_length[150]')
                      )                   

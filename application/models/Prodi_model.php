@@ -15,6 +15,7 @@ class Prodi_model extends MY_Model
 
         $this->has_many['mahasiswa'] = array('mahasiswa_model', 'prodiID', 'prodiID');
         $this->has_many['group_pertanyaan'] = array('group_model', 'prodiID', 'prodiID');
+        $this->has_many['group_dosen'] = array('group_dosen', 'prodiID', 'prodiID');
 
 
 		parent::__construct();

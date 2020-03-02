@@ -18,7 +18,7 @@ class Group extends CI_Controller {
       parent::__construct();
 
 
-      $this->load->model(array('Import_model'=> 'imp', 'Group_model' => 'group', 'Prodi_model' => 'prodi'));
+      $this->load->model(array('Import_model'=> 'imp', 'Group_model' => 'group', 'Pertanyaan_model' => 'pertanyaan', 'PertanyaanDosen_model' => 'pertanyaan_dosen', 'Prodi_model' => 'prodi'));
       $this->load->library(array('ion_auth', 'form_validation', 'template'));
       $this->load->helper('bootstrap_helper','download');
    }
@@ -71,7 +71,7 @@ class Group extends CI_Controller {
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
          $row[] = $field->groupID;
-         $row[] = $field->nama_prodi;
+         $row[] = !empty($field->nama_prodi) ? $field->nama_prodi : 'Semua Prodi';
          $row[] = $field->nama;
          $row[] = $field->jawaban;
          $row[] = $field->nilai;
@@ -124,6 +124,7 @@ class Group extends CI_Controller {
       }
 
       $opt_prodi     = $this->prodi->as_dropdown('nama_prodi')->get_all();
+      $opt_prodi     = array(0=>'Semua Prodi') + $opt_prodi;
 
       $row = array();
       if($this->input->post('groupID')){
@@ -141,8 +142,7 @@ class Group extends CI_Controller {
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->groupID) ? 'update' : 'create'),
-             'groupID' => form_input(array('name'=>'groupID', 'id'=>'groupID', 'class'=>'form-control', 'value'=>!empty($row->groupID) ? $row->groupID : '')),
+      $data = array('hidden'=> form_hidden('groupID', !empty($row->groupID) ? $row->groupID : ''),
              'prodiID' => form_dropdown('prodiID', $opt_prodi, !empty($row->prodiID) ? $row->prodiID : '', 'class="chosen-select"'),
              'nama' => form_input(array('name'=>'nama', 'id'=>'nama', 'class'=>'form-control', 'value'=>!empty($row->nama) ? $row->nama : '')),
              'jawaban' => form_input(array('name'=>'jawaban', 'id'=>'jawaban', 'class'=>'form-control', 'value'=>!empty($row->jawaban) ? $row->jawaban : '')),
@@ -161,7 +161,6 @@ class Group extends CI_Controller {
       
       $rules = array(
             'insert' => array(                     
-                     array('field' => 'groupID', 'label' => 'GroupID', 'rules' => 'trim|required|is_unique[group_pertanyaan.groupID]|max_length[8]'),
                      array('field' => 'prodiID', 'label' => 'Nama Prodi', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'nama', 'label' => 'Nama', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'jawaban', 'label' => 'Jawaban', 'rules' => 'trim|required|max_length[150]'),
@@ -176,8 +175,7 @@ class Group extends CI_Controller {
                      )                   
             );
         
-      $row = array('groupID' => $this->input->post('groupID'),
-            'prodiID' => $this->input->post('prodiID'),
+      $row = array('prodiID' => $this->input->post('prodiID'),
             'nama' => $this->input->post('nama'),
             'jawaban' => $this->input->post('jawaban'),
             'nilai' => $this->input->post('nilai'));
@@ -185,7 +183,7 @@ class Group extends CI_Controller {
       
       $code = 0;
 
-      if($this->input->post('aksi') == 'create'){
+      if($this->input->post('groupID') == null){
 
          $this->form_validation->set_rules($rules['insert']);
 
@@ -257,10 +255,43 @@ class Group extends CI_Controller {
          $notifications = $error['code'].' : '.$error['message'];
       }
       else{
+         $count_pertanyaan = $this->pertanyaan->count_rows(array('groupID'=>$id));
+         if($count_pertanyaan > 0)
+            $this->pertanyaan->where('groupID', $id)->delete();
+         
+         $count_pertanyaanDosen = $this->pertanyaan_dosen->count_rows(array('groupID'=>$id));
+         if($count_pertanyaanDosen > 0)
+            $this->pertanyaan_dosen->where('groupID', $id)->delete();
+
          $notifications = 'Success Delete Data';
       }
 
       $notifications = ($code == 0) ? notifications('success', $notifications) : notifications('error', $notifications);
+      
+      echo json_encode(array('message' => $notifications, 'code' => $code));
+   }
+
+   public function cek_delete()
+   {
+      if (!$this->ion_auth->logged_in()){            
+         redirect('auth/login', 'refresh');
+      }
+
+      $code = 0;
+      $notifications = '';
+
+      $id = $this->input->post('groupID');
+
+      $count_pertanyaan      = $this->pertanyaan->count_rows(array('groupID'=>$id));
+      $count_pertanyaanDosen = $this->pertanyaan_dosen->count_rows(array('groupID'=>$id));
+
+      if($count_pertanyaan > 0 || $count_pertanyaanDosen > 0){
+         $code = 1;
+         $notifications = 'Terdapat Data Pada Tabel Pertanyaan Sejumlah '.$count_pertanyaan.' & Pertanyaan Dosen Sejumlah '.$count_pertanyaanDosen.' Yang Terhubung Ke Group Pertanyaan Ini. Menghapus Group Pertanyaan Ini Akan Menyebabkan Beberapa Data Pertanyaan & Pertanyaan Dosen Akan Terhapus.';
+      }
+      else{
+         $code = 0;
+      }
       
       echo json_encode(array('message' => $notifications, 'code' => $code));
    }

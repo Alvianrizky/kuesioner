@@ -77,10 +77,6 @@
                     <div id="hidden"></div>
                     <div id="js-config"></div>
                     <div class="form-group">
-                        <label>Group ID</label>
-                        <div id="groupID"></div>
-                    </div>
-                    <div class="form-group">
                         <label>Program Studi</label>
                         <div id="prodiID"></div>
                     </div>
@@ -216,7 +212,6 @@
                     //data = JSON.parse(data);
                     $('#hidden').html(data.hidden);
                     $('#js-config').html(data.jsConfig);
-                    $('#groupID').html(data.groupID);
                     $('#prodiID').html(data.prodiID);
                     $('#nama').html(data.nama);
                     $('#jawaban').html(data.jawaban);
@@ -358,8 +353,6 @@
                 
                 data = JSON.parse(data);
                 $('#hidden').html(data.hidden);
-                $('#groupID').html(data.groupID);
-                $('input[name=groupID]').prop('readonly',true);
                 $('#prodiID').html(data.prodiID);
                 $('#nama').html(data.nama);
                 $('#jawaban').html(data.jawaban);
@@ -370,6 +363,48 @@
         });
     }
 
+    function delete_data(id)
+    {
+        var agree = confirm("Yakin Akan Menghapus Data Ini?");
+        if (agree){
+            $.ajax({
+                url: site_url + 'cek_delete/',
+                data: {'groupID':id},
+                cache: false,
+                type: "POST",
+                dataType: "JSON", //Tidak Usah Memakai JSON.parse(data);
+                success: function(cekData){
+                    if(cekData.code == 1){
+                        var agree2 = confirm(cekData.message);
+                        if(agree2){
+                            $.post(site_url + 'delete/', {'groupID':id}, function(data) {
+                                data = JSON.parse(data);
+                                $('#notifications').append(data.message);
+                                if(data.code == 0) table.draw(false);
+                                table_data();
+                            });
+                        }
+                        else{
+                           return false ;       
+                        }
+                    }
+                    else{
+                        $.post(site_url + 'delete/', {'groupID':id}, function(data) {
+                            data = JSON.parse(data);
+                            $('#notifications').append(data.message);
+                            if(data.code == 0) table.draw(false);
+                            table_data();
+                        }); 
+                    }
+                    
+                }   
+            });
+        }            
+        else
+            return false ;
+    }
+
+/*
     function delete_data(id)
     {
         var agree = confirm("Are you sure you want to delete this item?");
@@ -390,5 +425,5 @@
         else
             return false ;
     }
-
+*/
 </script>

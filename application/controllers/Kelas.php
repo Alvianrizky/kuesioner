@@ -16,7 +16,7 @@ class Kelas extends CI_Controller {
       parent::__construct();
 
 
-      $this->load->model(array('kelas_model'=>'kelas','Import_model'=> 'imp'));
+      $this->load->model(array('kelas_model'=>'kelas','Import_model'=> 'imp', 'MhsKelas_model'=>'mhskelas', 'DsnKelas_Model'=>'dsnkelas'));
       $this->load->library(array('ion_auth', 'form_validation', 'template', 'table'));
       $this->load->helper('bootstrap_helper');
    }
@@ -68,7 +68,6 @@ class Kelas extends CI_Controller {
          $row = array();
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
-         $row[] = $field->kelasID;
          $row[] = $field->nama_kelas;
 
          $data[] = $row;
@@ -120,8 +119,7 @@ class Kelas extends CI_Controller {
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->kelasID) ? 'update' : 'create'),
-                  'kelasID' => form_input(array('name'=>'kelasID', 'id'=>'kelasID', 'class'=>'form-control', 'value'=>!empty($row->kelasID) ? $row->kelasID : '')),
+      $data = array('hidden'=> form_hidden('kelasID', !empty($row->kelasID) ? $row->kelasID : ''),
                   'nama_kelas' => form_input(array('name'=>'nama_kelas', 'id'=>'nama_kelas', 'class'=>'form-control', 'value'=>!empty($row->nama_kelas) ? $row->nama_kelas : ''))
                );
 
@@ -136,18 +134,15 @@ class Kelas extends CI_Controller {
       }
 
       $rules = array(
-            'insert' => array(array('field' => 'kelasID', 'label' => 'Kelas ID', 'rules' => 'trim|is_unique[kelas.kelasID]|required|max_length[6]'),
-                        array('field' => 'nama_kelas', 'label' => 'nama_kelas', 'rules' => 'trim|max_length[255]')),
-            'update' => array(array('field' => 'kelasID', 'label' => 'Kelas ID', 'rules' => 'trim|required|max_length[6]'), 
-                        array('field' => 'nama_kelas', 'label' => 'nama_kelas', 'rules' => 'trim|max_length[255]'))                  
+            'insert' => array(array('field' => 'nama_kelas', 'label' => 'Nama Kelas', 'rules' => 'trim|is_unique[kelas.nama_kelas]|required|max_length[255]')),
+            'update' => array(array('field' => 'nama_kelas', 'label' => 'Nama Kelas', 'rules' => 'trim|max_length[255]'))                  
             );
         
-      $row  = array('kelasID' => $this->input->post('kelasID'),
-             'nama_kelas' => $this->input->post('nama_kelas'));
+      $row  = array('nama_kelas' => $this->input->post('nama_kelas'));
 
       $code = 0;
 
-      if($this->input->post('aksi') == 'create'){
+      if($this->input->post('kelasID') == null){
 
          $this->form_validation->set_rules($rules['insert']);
 
@@ -214,15 +209,48 @@ class Kelas extends CI_Controller {
       $this->kelas->where('kelasID', $id)->delete();
 
       $error =  $this->db->error();
-      if($error['code'] <> 0){
+      if($error['code'] <> 0){    
          $code = 1;
          $notifications = $error['code'].' : '.$error['message'];
       }
       else{
+         $count_mhskelas = $this->mhskelas->count_rows(array('kelasID'=>$id));
+         if($count_mhskelas > 0)
+            $this->mhskelas->where('kelasID', $id)->delete();
+         
+         $count_dsnkelas = $this->dsnkelas->count_rows(array('kelasID'=>$id));
+         if($count_dsnkelas > 0)
+            $this->dsnkelas->where('kelasID', $id)->delete();
+
          $notifications = 'Success Delete Data';
       }
 
       $notifications = ($code == 0) ? notifications('success', $notifications) : notifications('error', $notifications);
+      
+      echo json_encode(array('message' => $notifications, 'code' => $code));
+   }
+
+   public function cek_delete()
+   {
+      if (!$this->ion_auth->logged_in()){            
+         redirect('auth/login', 'refresh');
+      }
+
+      $code = 0;
+      $notifications = '';
+
+      $id = $this->input->post('kelasID');
+
+      $count_mhskelas = $this->mhskelas->count_rows(array('kelasID'=>$id));
+      $count_dsnkelas = $this->dsnkelas->count_rows(array('kelasID'=>$id));
+
+      if($count_mhskelas > 0 || $count_dsnkelas > 0){
+         $code = 1;
+         $notifications = 'Terdapat Data Pada Tabel Mahasiswa Kelas Sejumlah '.$count_mhskelas.' &  Dosen Kelas Sejumlah '.$count_dsnkelas.' Yang Terhubung Ke Kelas Ini. Menghapus Kelas Ini Akan Menyebabkan Beberapa Data Mahasiswa Kelas & Dosen Kelas Akan Terhapus.';
+      }
+      else{
+         $code = 0;
+      }
       
       echo json_encode(array('message' => $notifications, 'code' => $code));
    }
@@ -278,15 +306,15 @@ class Kelas extends CI_Controller {
                     
                                         
                     //$primarydata[$i]= $value['A'];
-                    $query = $this->kelas->where('kelasID', $value['A'])->get();
+                    $query = $this->kelas->where('nama_kelas', $value['A'])->get();
                     if(!empty($query)){
-                        $updatedata[$i]['kelasID'] = $value['A'];
-                        $updatedata[$i]['nama_kelas'] = $value['B'];
+                        // $updatedata[$i]['kelasID'] = $value['A'];
+                        $updatedata[$i]['nama_kelas'] = $value['A'];
                         $updatedata[$i]['created_at'] = date('Y-m-d H:i:s');
                     }
                     else{
-                        $insertdata[$i]['kelasID'] = $value['A'];
-                        $insertdata[$i]['nama_kelas'] = $value['B'];
+                        // $insertdata[$i]['kelasID'] = $value['A'];
+                        $insertdata[$i]['nama_kelas'] = $value['A'];
                         $insertdata[$i]['created_at'] = date('Y-m-d H:i:s');
                     }
 

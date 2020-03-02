@@ -217,7 +217,7 @@ class Cell
 
                 break;
             case DataType::TYPE_NUMERIC:
-                $this->value = (float) $pValue;
+                $this->value = 0 + $pValue;
 
                 break;
             case DataType::TYPE_FORMULA:
@@ -308,7 +308,7 @@ class Cell
      *    Get old calculated value (cached)
      *    This returns the value last calculated by MS Excel or whichever spreadsheet program was used to
      *        create the original spreadsheet file.
-     *    Note that this value is not guaranteed to refelect the actual calculated value because it is
+     *    Note that this value is not guaranteed to reflect the actual calculated value because it is
      *        possible that auto-calculation was disabled in the original spreadsheet, and underlying data
      *        values used by the formula have changed since it was last calculated.
      *
@@ -511,7 +511,7 @@ class Cell
     {
         if ($mergeRange = $this->getMergeRange()) {
             $mergeRange = Coordinate::splitRange($mergeRange);
-            list($startCell) = $mergeRange[0];
+            [$startCell] = $mergeRange[0];
             if ($this->getCoordinate() === $startCell) {
                 return true;
             }
@@ -523,7 +523,7 @@ class Cell
     /**
      * If this cell is in a merge range, then return the range.
      *
-     * @return string
+     * @return false|string
      */
     public function getMergeRange()
     {
@@ -569,7 +569,7 @@ class Cell
      */
     public function isInRange($pRange)
     {
-        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($pRange);
+        [$rangeStart, $rangeEnd] = Coordinate::rangeBoundaries($pRange);
 
         // Translate properties
         $myColumn = Coordinate::columnIndexFromString($this->getColumn());

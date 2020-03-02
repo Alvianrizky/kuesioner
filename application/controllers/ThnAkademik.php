@@ -36,19 +36,6 @@ class ThnAkademik extends CI_Controller {
 
       $this->template->backend('thnakademik_v', $data);
    }
-   
-   public function download($fileName = NULL)
-   {
-      if($fileName)
-      {
-         $file = realpath("assets/download")."\\".$fileName;
-         if(file_exists($file))
-         {
-            $data = file_get_contents($file);
-            force_download($fileName,$data);
-         }
-      }
-   }
 
    public function get_thnakademik()
    {
@@ -70,7 +57,7 @@ class ThnAkademik extends CI_Controller {
          $row = array();
          $row[] = ajax_button($url_view, $url_update, $url_delete);
          $row[] = $no;
-         $row[] = $field->thnAkademikID;
+         //$row[] = $field->thnAkademikID;
          $row[] = $field->thnAkademik;
          $row[] = $field->status;
 
@@ -128,10 +115,9 @@ class ThnAkademik extends CI_Controller {
          $row = (object) $row;
       }
 
-      $data = array('hidden'=> form_hidden('aksi', !empty($row->thnAkademikID) ? 'update' : 'create'),
-             'thnAkademikID' => form_input(array('name'=>'thnAkademikID', 'id'=>'thnAkademikID', 'class'=>'form-control', 'value'=>!empty($row->thnAkademikID) ? $row->thnAkademikID : '')),
-             'thnAkademik' => form_input(array('name'=>'thnAkademik', 'id'=>'thnAkademik', 'class'=>'form-control', 'value'=>!empty($row->thnAkademik) ? $row->thnAkademik : '')),
-             'status' => form_input(array('name'=>'status', 'id'=>'status', 'class'=>'form-control', 'value'=>!empty($row->status) ? $row->status : ''))
+      $data = array('hidden'=> form_hidden('thnAkademikID', !empty($row->thnAkademikID) ? $row->thnAkademikID : ''),
+            'thnAkademik' => form_input(array('name'=>'thnAkademik', 'id'=>'thnAkademik', 'class'=>'form-control', 'value'=>!empty($row->thnAkademik) ? $row->thnAkademik : '')),
+            'status' => form_dropdown('status', array('Aktif'=>'Aktif', 'Tidak Aktif'=>'Tidak Aktif'), !empty($row->status) ? $row->status : '', 'class="form-control"'),
             );
 
       echo json_encode($data);
@@ -146,30 +132,31 @@ class ThnAkademik extends CI_Controller {
       
       $rules = array(
             'insert' => array(                     
-                     array('field' => 'thnAkademikID', 'label' => 'thnAkademikID', 'rules' => 'trim|required|is_unique[tahun_akademik.thnAkademikID]|max_length[8]'),
-                     array('field' => 'thnAkademik', 'label' => 'thnAkademik', 'rules' => 'trim|required|max_length[150]'),
+                     array('field' => 'thnAkademik', 'label' => 'Tahun Akademik', 'rules' => 'trim|required|is_unique[tahunakademik.thnAkademik]|max_length[150]'),
                      array('field' => 'status', 'label' => 'status', 'rules' => 'trim|required|max_length[150]')         
                      ),
             'update' => array(
-                     array('field' => 'thnAkademikID', 'label' => 'thnAkademikID', 'rules' => 'trim|required|max_length[8]'),
-                     array('field' => 'thnAkademik', 'label' => 'thnAkademik', 'rules' => 'trim|required|max_length[150]'),
+                     array('field' => 'thnAkademik', 'label' => 'Tahun Akademik', 'rules' => 'trim|required|max_length[150]'),
                      array('field' => 'status', 'label' => 'status', 'rules' => 'trim|required|max_length[150]')
                      )               
             );
         
-      $row = array('thnAkademikID' => $this->input->post('thnAkademikID'),
-                  'thnAkademik' => $this->input->post('thnAkademik'),
+      $row = array('thnAkademik' => $this->input->post('thnAkademik'),
                   'status' =>$this->input->post('status'));
       
       
       $code = 0;
 
-      if($this->input->post('aksi') == 'create'){
+      if($this->input->post('thnAkademikID') == null){
 
          $this->form_validation->set_rules($rules['insert']);
 
          if ($this->form_validation->run() == true) {
             
+            if($row['status'] == 'Aktif'){
+               $this->akademik->update(array('status'=>'Tidak Aktif'));
+            }
+
             $this->akademik->insert($row);
 
             $error =  $this->db->error();
@@ -194,10 +181,15 @@ class ThnAkademik extends CI_Controller {
 
          if ($this->form_validation->run() == true) {
 
+            if($row['status'] == 'Aktif'){
+               $this->akademik->update(array('status'=>'Tidak Aktif'));
+            }
+
             $id = $this->input->post('thnAkademikID');
 
             $this->akademik->where('thnAkademikID', $id)->update($row);
             
+
             $error =  $this->db->error();
             if($error['code'] <> 0){               
                $code = 1;               
@@ -244,6 +236,32 @@ class ThnAkademik extends CI_Controller {
       echo json_encode(array('message' => $notifications, 'code' => $code));
    }
 
+/*
+   public function cek_delete()
+   {
+      if (!$this->ion_auth->logged_in()){            
+         redirect('auth/login', 'refresh');
+      }
+
+      $this->load->model(array('MhsKelas_model'=>'mhskelas', 'DsnKelas_Model'=>'dsnkelas'))
+      $code = 0;
+
+      $id = $this->input->post('thnAkademikID');
+
+      $count_mhskelas = $this->mhskelas->count_rows(array('thnAkademikID'=>$id));
+
+      if($count_mhskelas > 0){
+         $code = 1;
+         $notifications = 'Terdapat Data Pada Mahasiswa Kelas Yang Terhubung Ke Tahun Akademik Ini.<br/>Menghapus Tahun Akademik Ini Akan Menyebabkan Beberapa Data Nama Mahasiswa Tidak Tampil.';
+      }
+      else{
+          $code = 0;
+      }
+      
+      echo json_encode(array('message' => $notifications, 'code' => $code));
+   }
+*/
+
    public function upload()
     {
         $data = array();
@@ -287,6 +305,8 @@ class ThnAkademik extends CI_Controller {
                 //$primarydata = array();
                 foreach($allDataInSheet as $value)
                 {
+							
+
                     if($flag)
                     {
                         $flag = false;
@@ -340,6 +360,19 @@ class ThnAkademik extends CI_Controller {
         echo json_encode(array('message' => $notifications, 'code' => $code));
         //redirect('Import/import', 'refresh');
     }
+
+   public function download($fileName = NULL)
+   {
+      if($fileName)
+      {
+         $file = realpath("assets/download")."\\".$fileName;
+         if(file_exists($file))
+         {
+            $data = file_get_contents($file);
+            force_download($fileName,$data);
+         }
+      }
+   }
 
     public function checkFileValidation($string)
     {

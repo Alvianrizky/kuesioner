@@ -44,7 +44,6 @@
                         <tr>
                             <th style="width: 100px!important;">Action</th>
                             <th>No</th>                            
-                            <th>Tahun Akademik ID</th>
                             <th>Tahun Akademik</th>
                             <th>Status</th>     
                         </tr>
@@ -56,7 +55,6 @@
                         <tr>
                             <th>Action</th>
                             <th>No</th>                            
-                            <th>Tahun Akademik ID</th>
                             <th>Tahun Akademik</th>
                             <th>Status</th>                          
                         </tr>
@@ -73,15 +71,11 @@
                     <div id="hidden"></div>
                     <div id="js-config"></div>
                     <div class="form-group">
-                        <label>Tahun Akademik ID</label>
-                        <div id="thnAkademikID"></div>
-                    </div>
-                    <div class="form-group">
                         <label>Tahun Akademik</label>
                         <div id="thnAkademik"></div>
                     </div>
                     <div class="form-group">
-                        <label>status</label>
+                        <label>Status</label>
                         <p id="status"></p>
                     </div>
                 </div>
@@ -100,15 +94,11 @@
                 <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label>Tahun Akademik ID</label>
-                        <p id="thnAkademikID"></p>
-                    </div>
-                    <div class="form-group">
                         <label>Tahun Akademik</label>
                         <p id="thnAkademik"></p>
                     </div>
                     <div class="form-group">
-                        <label>status</label>
+                        <label>Status</label>
                         <p id="status"></p>
                     </div>
                 </div>
@@ -193,11 +183,8 @@
                     //data = JSON.parse(data);
                     $('#hidden').html(data.hidden);
                     $('#js-config').html(data.jsConfig);
-                    $('#thnAkademikID').html(data.thnAkademikID);
                     $('#thnAkademik').html(data.thnAkademik);
                     $('#status').html(data.status);
-                    
-                    $(".chosen-select").chosen();
                 }
             });
         });
@@ -270,7 +257,6 @@
     function form_data()
     {
         $('#hidden').empty();
-        $('#thnAkademikID').empty();
         $('#thnAkademik').empty();
         $('#status').empty();
 
@@ -282,7 +268,6 @@
     function form_view()
     {
         $('p#hidden').empty();
-        $('p#thnAkademikID').empty();
         $('p#thnAkademik').empty();
         $('p#status').empty();
 
@@ -305,7 +290,7 @@
 
                 data = JSON.parse(data);
                 $('p#hidden').html(data.hidden);
-                $('p#thnAkademikID').html(data.thnAkademikID);
+                //$('p#thnAkademikID').html(data.thnAkademikID);
                 $('p#thnAkademik').html(data.thnAkademik);
                 $('p#status').html(data.status);
                  
@@ -327,7 +312,7 @@
                 
                 data = JSON.parse(data);
                 $('#hidden').html(data.hidden);
-                $('#thnAkademikID').html(data.thnAkademikID);
+                //$('#thnAkademikID').html(data.thnAkademikID);
                 $('input[name=thnAkademikID]').prop('readonly',true);
                 $('#thnAkademik').html(data.thnAkademik);
                 $('#status').html(data.status);
@@ -357,5 +342,47 @@
         else
             return false ;
     }
+    
+    /*
+    function delete_data(id)
+    {
+        var agree = confirm("Are you sure you want to delete this item?");
+        if (agree){
+            $.ajax({
+                url: site_url + 'cek_delete/',
+                data: {'thnAkademikID':id},
+                cache: false,
+                type: "POST",
+                dataType: "JSON", //Tidak Usah Memakai JSON.parse(data);
+                success: function(cekData){
+                    if(cekData.code == 1){
+                        var agree2 = confirm(cekData.notifications);
+                        if(agree2){
+                            $.post(site_url + 'delete/', {'thnAkademikID':id}, function(data) {
+                                $('#notifications').append(data.message);
+                                if(data.code == 0) table.draw(false);
+                                table_data();
+                            });
+                        }
+                        else{
+                           return false ;       
+                        }
+                    }
+                    else{
+                        $.post(site_url + 'delete/', {'thnAkademikID':id}, function(data) {
+                            $('#notifications').append(data.message);
+                            if(data.code == 0) table.draw(false);
+                            table_data();
+                        }); 
+                    }
+                    
+                }   
+            });
+        }            
+        else
+            return false ;
+    }
+    */
+
 
 </script>

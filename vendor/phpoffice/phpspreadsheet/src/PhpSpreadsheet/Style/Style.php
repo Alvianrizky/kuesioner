@@ -151,33 +151,38 @@ class Style extends Supervisor
      *
      * <code>
      * $spreadsheet->getActiveSheet()->getStyle('B2')->applyFromArray(
-     *         array(
-     *             'font'    => array(
-     *                 'name'      => 'Arial',
-     *                 'bold'      => true,
-     *                 'italic'    => false,
-     *                 'underline' => Font::UNDERLINE_DOUBLE,
-     *                 'strikethrough'    => false,
-     *                 'color'     => array(
+     *     [
+     *         'font' => [
+     *             'name' => 'Arial',
+     *             'bold' => true,
+     *             'italic' => false,
+     *             'underline' => Font::UNDERLINE_DOUBLE,
+     *             'strikethrough' => false,
+     *             'color' => [
+     *                 'rgb' => '808080'
+     *             ]
+     *         ],
+     *         'borders' => [
+     *             'bottom' => [
+     *                 'borderStyle' => Border::BORDER_DASHDOT,
+     *                 'color' => [
      *                     'rgb' => '808080'
-     *                 )
-     *             ),
-     *             'borders' => array(
-     *                 'bottom'     => array(
-     *                     'borderStyle' => Border::BORDER_DASHDOT,
-     *                     'color' => array(
-     *                         'rgb' => '808080'
-     *                     )
-     *                 ),
-     *                 'top'     => array(
-     *                     'borderStyle' => Border::BORDER_DASHDOT,
-     *                     'color' => array(
-     *                         'rgb' => '808080'
-     *                     )
-     *                 )
-     *             ),
-     *             'quotePrefix'    => true
-     *         )
+     *                 ]
+     *             ],
+     *             'top' => [
+     *                 'borderStyle' => Border::BORDER_DASHDOT,
+     *                 'color' => [
+     *                     'rgb' => '808080'
+     *                 ]
+     *             ]
+     *         ],
+     *         'alignment' => [
+     *             'horizontal' => Alignment::HORIZONTAL_CENTER,
+     *             'vertical' => Alignment::VERTICAL_CENTER,
+     *             'wrapText' => true,
+     *         ],
+     *         'quotePrefix'    => true
+     *     ]
      * );
      * </code>
      *
@@ -199,7 +204,7 @@ class Style extends Supervisor
                 $rangeA = $pRange;
                 $rangeB = $pRange;
             } else {
-                list($rangeA, $rangeB) = explode(':', $pRange);
+                [$rangeA, $rangeB] = explode(':', $pRange);
             }
 
             // Calculate range outer borders
@@ -332,6 +337,9 @@ class Style extends Supervisor
                         $this->getActiveSheet()->getStyle($range)->applyFromArray($regionStyles, false);
                     }
                 }
+
+                // restore initial cell selection range
+                $this->getActiveSheet()->getStyle($pRange);
 
                 return $this;
             }

@@ -43,8 +43,7 @@
                     <thead>
                         <tr>
                             <th style="width: 100px!important;">Action</th>
-                            <th>No</th>
-                            <th>Pertanyaan ID</th>                            
+                            <th>No</th>                         
                             <th>Nama Group</th>
                             <th>Pertanyaan</th>     
                         </tr>
@@ -55,8 +54,7 @@
                     <tfoot>
                         <tr>
                             <th>Action</th>
-                            <th>No</th>
-                            <th>Pertanyaan ID</th>                            
+                            <th>No</th>                          
                             <th>Nama Group</th>
                             <th>Pertanyaan</th>                          
                         </tr>
@@ -72,10 +70,6 @@
                 <div class="col-lg-6">
                     <div id="hidden"></div>
                     <div id="js-config"></div>
-                    <div class="form-group">
-                        <label>Pertanyaan ID</label>
-                        <div id="pertanyaanID"></div>
-                    </div>
                     <div class="form-group">
                         <label>Nama Group</label>
                         <div id="groupID"></div>
@@ -196,7 +190,6 @@
                     //data = JSON.parse(data);
                     $('#hidden').html(data.hidden);
                     $('#js-config').html(data.jsConfig);
-                    $('#pertanyaanID').html(data.pertanyaanID);
                     $('#groupID').html(data.groupID);
                     $('#pertanyaan').html(data.pertanyaan);
                     
@@ -273,7 +266,6 @@
     function form_data()
     {
         $('#hidden').empty();
-        $('#pertanyaanID').empty();
         $('#groupID').empty();
         $('#pertanyaan').empty();
 
@@ -330,8 +322,6 @@
                 
                 data = JSON.parse(data);
                 $('#hidden').html(data.hidden);
-                $('#pertanyaanID').html(data.pertanyaanID);
-                $('input[name=pertanyaanID]').prop('readonly',true);
                 $('#groupID').html(data.groupID);
                 $('#pertanyaan').html(data.pertanyaan);
                 

@@ -13,7 +13,8 @@ class Dosen_model extends MY_Model
         $this->fillable = $this->column_order;
         $this->timestamps = TRUE;
 
-        //$this->has_many['products'] = array('Products_model', 'SupplierID', 'SupplierID');
+        $this->has_many['hasil_dosen'] = array('Hasildosen_model', 'npp', 'npp');
+        
 
 		parent::__construct();
 	

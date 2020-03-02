@@ -27,7 +27,7 @@ class Group_model extends MY_Model
         $this->db->select($this->column_search);
 
         $this->db->from($this->table);
-        $this->db->join('programstudi', 'programstudi.prodiID=group_pertanyaan.prodiID');
+        $this->db->join('programstudi', 'programstudi.prodiID=group_pertanyaan.prodiID', 'LEFT');
 
         $i = 0;
         
